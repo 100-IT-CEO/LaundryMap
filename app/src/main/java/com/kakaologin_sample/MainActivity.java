@@ -2,6 +2,8 @@ package com.kakaologin_sample;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,11 +14,16 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.material.navigation.NavigationView;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.Account;
 import com.kakao.sdk.user.model.User;
@@ -35,9 +42,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG="사용자";
-    private ImageButton btn_login, btn_login_out;
+    private ImageView btn_login, btn_login_out;
     private NaverMap naverMap;
     private FusedLocationSource locationSource;
+    Toolbar toolbar;
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
 
 
     @Override
@@ -50,16 +60,29 @@ public class MainActivity extends AppCompatActivity {
 
         NaverMapSdk.getInstance(this).setClient(new NaverMapSdk.NaverCloudPlatformClient("p0w8vochex"));
 
-        Intent intent = new Intent(getApplicationContext(), MapFragmentActivity.class);
+        btn_login = findViewById(R.id.btn_login);
 
-        startActivity(intent);
-//
-//
-//
-//        btn_login = findViewById(R.id.btn_login);
-//        btn_login_out = findViewById(R.id.btn_login_out);
-//
-//
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), MapFragmentActivity.class);
+
+                startActivity(intent);
+            }
+        });
+
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+
+
+
+setSupportActionBar(toolbar);
+     getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 왼쪽 상단 버튼 만들기
+       getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher_foreground); //왼쪽 상단 버튼 아이콘 지정
+
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView)findViewById(R.id.navigation_view);
+
+
 //        btn_login.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v) {
@@ -91,22 +114,28 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        });
-//
-//        btn_login_out.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                UserApiClient.getInstance().logout(error -> {
-//                    if (error != null) {
-//                        Log.e(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
-//                    }else{
-//                        Log.e(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
-//                    }
-//                    return null;
-//                });
-//            }
-//        });
+
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{ // 왼쪽 상단 버튼 눌렀을 때
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() { //뒤로가기 했을 때
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
     // 키해시 얻기
     public String getKeyHash(){
         try{
