@@ -25,6 +25,10 @@
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="p0w8vochex" />
 
+        <activity android:name=".MapFragmentActivity"
+            android:exported="true"/>
+
+
         <activity android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

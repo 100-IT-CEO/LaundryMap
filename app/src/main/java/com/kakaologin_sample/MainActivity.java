@@ -3,9 +3,11 @@ package com.kakaologin_sample;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.media.Image;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Base64;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.Account;
@@ -28,7 +31,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG="사용자";
-    private ImageButton btn_login, btn_login_out;
+    private ImageView btn_login, btn_login_out;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +41,19 @@ public class MainActivity extends AppCompatActivity {
         Log.d("사용자", getKeyHash());
 
 
-        NaverMapSdk.getInstance(this).setClient(new NaverMapSdk.NaverCloudPlatformClient("p0w8vochex"));
 
-//        NaverMap naverMap = findViewById(R.id.naverMap);
-//
-//        Marker marker = new Marker();
-//        marker.setPosition(new LatLng(37.5670135, 126.9783740));
-//        marker.setMap(naverMap);
 
-//
-//
-//
-//        btn_login = findViewById(R.id.btn_login);
-//        btn_login_out = findViewById(R.id.btn_login_out);
-//
-//
+
+        btn_login = findViewById(R.id.btn_login);
+
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,MapFragmentActivity.class);
+                startActivity(intent);
+            }
+        });
+
 //        btn_login.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v) {
@@ -84,20 +85,8 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        });
-//
-//        btn_login_out.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                UserApiClient.getInstance().logout(error -> {
-//                    if (error != null) {
-//                        Log.e(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
-//                    }else{
-//                        Log.e(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
-//                    }
-//                    return null;
-//                });
-//            }
-//        });
+
+
     }
 
     // 키해시 얻기
