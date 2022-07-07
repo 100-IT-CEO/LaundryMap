@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
+
     <meta-data android:name="com.kakao.sdk.AppKey" android:value="823bfccbaed1b11ec9d2d72feb1edf5b"/>
 
     <application
@@ -46,6 +47,11 @@
                     android:scheme="823bfccbaed1b11ec9d2d72feb1edf5b"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".MapFragmentActivity"
+            android:exported="true">
+        </activity>
+
     </application>
 
 </manifest>

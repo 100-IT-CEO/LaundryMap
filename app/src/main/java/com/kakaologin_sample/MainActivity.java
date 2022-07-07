@@ -1,8 +1,10 @@
 package com.kakaologin_sample;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -19,16 +21,24 @@ import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.Account;
 import com.kakao.sdk.user.model.User;
 import com.naver.maps.geometry.LatLng;
+import com.naver.maps.map.LocationTrackingMode;
+import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.NaverMapSdk;
 import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.util.FusedLocationSource;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG="사용자";
     private ImageButton btn_login, btn_login_out;
+    private NaverMap naverMap;
+    private FusedLocationSource locationSource;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
         NaverMapSdk.getInstance(this).setClient(new NaverMapSdk.NaverCloudPlatformClient("p0w8vochex"));
 
-//        NaverMap naverMap = findViewById(R.id.naverMap);
-//
-//        Marker marker = new Marker();
-//        marker.setPosition(new LatLng(37.5670135, 126.9783740));
-//        marker.setMap(naverMap);
+        Intent intent = new Intent(getApplicationContext(), MapFragmentActivity.class);
 
+        startActivity(intent);
 //
 //
 //
@@ -118,5 +125,18 @@ public class MainActivity extends AppCompatActivity {
             Log.w("getPackageInfo", "Unable to getPackageInfo");
         }
         return null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if(locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)){
+            if(!locationSource.isActivated()){
+                naverMap.setLocationTrackingMode(LocationTrackingMode.Face);
+            }
+            return;
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

@@ -46,10 +46,5 @@
 <!--                />-->
 <!--        </LinearLayout>-->
 
-    <fragment android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/naverMap"
-        android:name="com.naver.maps.map.MapFragment" />
-
 
 </RelativeLayout>
