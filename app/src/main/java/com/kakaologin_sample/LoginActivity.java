@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
                                 account = user.getKakaoAccount();
 
                                 Intent intent = new Intent(v.getContext(), MapFragmentActivity.class);
-//                                intent.putExtra("User", account);  TODO
                                 startActivity(intent);
                             }
                             return null;

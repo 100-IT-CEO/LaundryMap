@@ -26,7 +26,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.navigation.NavigationView;
+import com.kakao.sdk.auth.AuthApiClient;
+import com.kakao.sdk.common.model.KakaoSdkError;
 import com.kakao.sdk.user.UserApiClient;
+import com.kakao.sdk.user.model.AccessTokenInfo;
 import com.kakao.sdk.user.model.Account;
 import com.kakao.sdk.user.model.User;
 import com.naver.maps.geometry.LatLng;
@@ -40,6 +43,9 @@ import com.naver.maps.map.util.FusedLocationSource;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -61,41 +67,40 @@ public class MainActivity extends AppCompatActivity {
 
         NaverMapSdk.getInstance(this).setClient(new NaverMapSdk.NaverCloudPlatformClient("p0w8vochex"));
 
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 왼쪽 상단 버튼 만들기
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher_foreground); //왼쪽 상단 버튼 아이콘 지정
-
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView)findViewById(R.id.navigation_view);
-
-        if (true){
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
+        if(AuthApiClient.getInstance().hasToken()){
+            UserApiClient.getInstance().accessTokenInfo((accessTokenInfo, error) -> {
+                if(error != null){
+                    if(error instanceof KakaoSdkError && ((KakaoSdkError) error).isInvalidTokenError() == true){
+                        startLoginActivity();
+                        Log.d("asdf", "a");
+                    }
+                    else{
+                        Log.d("asdf", "b");
+                        startLoginActivity();
+                    }
+                }
+                else{
+                    Log.d("asdf", "c");
+                    startMapFragmentActivity();
+                }
+                return null;
+            });
+        }else{
+            Log.d("asdf", "d");
+            startLoginActivity();
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:{ // 왼쪽 상단 버튼 눌렀을 때
-                drawerLayout.openDrawer(GravityCompat.START);
-                Toast.makeText(MainActivity.this, account.toString(), Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
+    public void startLoginActivity(){
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 
-    @Override
-    public void onBackPressed() { //뒤로가기 했을 때
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+    public void startMapFragmentActivity(){
+        Intent intent = new Intent(MainActivity.this, MapFragmentActivity.class);
+        startActivity(intent);
     }
+
     // 키해시 얻기
     public String getKeyHash(){
         try{
