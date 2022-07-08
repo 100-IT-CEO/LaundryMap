@@ -29,8 +29,14 @@ android {
 
 dependencies {
 
+//Rounded Image View
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 
-        // 네이버 SDK
+//Navigation Component
+    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.0-rc03'
+
+    // 네이버 SDK
     implementation 'com.naver.maps:map-sdk:3.15.0'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
     // 카카오 SDK 모듈 설치
