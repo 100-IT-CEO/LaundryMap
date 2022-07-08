@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 System.out.println("로그인 완료");
                                 account = user.getKakaoAccount();
-
                                 Intent intent = new Intent(v.getContext(), MapFragmentActivity.class);
                                 startActivity(intent);
                             }
