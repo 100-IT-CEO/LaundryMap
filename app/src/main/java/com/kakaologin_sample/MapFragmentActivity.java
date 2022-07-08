@@ -53,6 +53,8 @@ import com.naver.maps.map.util.FusedLocationSource;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 
 public class MapFragmentActivity extends AppCompatActivity
         implements OnMapReadyCallback {
@@ -65,6 +67,10 @@ public class MapFragmentActivity extends AppCompatActivity
     Toolbar toolbar;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
+
+    private ArrayList<Marker> markers;
+    private static final String HOST = "143.248.225.56";
+    private static final String PORT = "80";
 
 
     @Override
@@ -129,6 +135,8 @@ public class MapFragmentActivity extends AppCompatActivity
         naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
         naverMap.getUiSettings().setLocationButtonEnabled(true);
 
+
+        load_markers();
         // for test
         Marker marker = new Marker();
         marker.setPosition(new LatLng(37.5670135, 126.9783740));
@@ -152,39 +160,33 @@ public class MapFragmentActivity extends AppCompatActivity
         });
     }
 
+    public void load_markers(){
+        washterias =
+
+        markers;
+    }
+
+
     public void request(){
-        //url 요청주소 넣는 editText를 받아 url만들기
         String url = "http://143.248.225.56:80/test";
 
         //JSON형식으로 데이터 통신을 진행합니다!
         JSONObject testjson = new JSONObject();
         //입력해둔 edittext의 id와 pw값을 받아와 put해줍니다 : 데이터를 json형식으로 바꿔 넣어주었습니다.
-//            testjson.put("id", id.getText().toString());
-//            testjson.put("password", pw.getText().toString());
-//            String jsonString = testjson.toString(); //완성된 json 포맷
+        testjson.put("id", id.getText().toString());
+        testjson.put("password", pw.getText().toString());
+        String jsonString = testjson.toString(); //완성된 json 포맷
 
-        //이제 전송해볼까요?
         final RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,testjson, new Response.Listener<JSONObject>() {
 
-            //데이터 전달을 끝내고 이제 그 응답을 받을 차례입니다.
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    //받은 json형식의 응답을 받아
                     JSONObject jsonObject = new JSONObject(response.toString());
 
-                    //key값에 따라 value값을 쪼개 받아옵니다.
                     String resultId = jsonObject.getString("approve_id");
                     String resultPassword = jsonObject.getString("approve_pw");
-
-                    //만약 그 값이 같다면 로그인에 성공한 것입니다.
-                    if(resultId.equals("OK") & resultPassword.equals("OK")){
-
-                        //이 곳에 성공 시 화면이동을 하는 등의 코드를 입력하시면 됩니다.
-                    }else{
-                        //로그인에 실패했을 경우 실행할 코드를 입력하시면 됩니다.
-                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
