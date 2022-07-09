@@ -61,18 +61,7 @@
                     android:layout_height="wrap_content"
                     android:background="#F5F5F5"
                     android:orientation="vertical"
-                    android:visibility="visible">
-                    <Button
-                        android:id="@+id/asdf"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:background="#787878"
-                        android:text="세탁기 #1"
-                        android:textSize="8pt"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginRight="80dp"
-                        android:layout_marginLeft="80dp"/>
+                    android:visibility="gone">
                 </LinearLayout>
 
             </LinearLayout>
@@ -89,7 +78,7 @@
                     android:id="@+id/reserve_button_2"
                     android:layout_width="300dp"
                     android:layout_height="97dp"
-                    android:text="대형 세탁기"
+                    android:text="중형 세탁기"
                     android:textSize="10pt"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
@@ -98,7 +87,7 @@
 
                 <LinearLayout
                     android:id="@+id/layout_expand_2"
-                    android:layout_width="match_parent"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:background="#F5F5F5"
                     android:orientation="vertical"
@@ -118,7 +107,7 @@
                     android:id="@+id/reserve_button_3"
                     android:layout_width="300dp"
                     android:layout_height="97dp"
-                    android:text="대형 세탁기"
+                    android:text="대형 건조기"
                     android:textSize="10pt"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
@@ -127,7 +116,7 @@
 
                 <LinearLayout
                     android:id="@+id/layout_expand_3"
-                    android:layout_width="match_parent"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:background="#F5F5F5"
                     android:orientation="vertical"
@@ -146,7 +135,7 @@
                         android:id="@+id/reserve_button_4"
                         android:layout_width="300dp"
                         android:layout_height="97dp"
-                        android:text="대형 세탁기"
+                        android:text="중형 건조기"
                         android:textSize="10pt"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
@@ -155,7 +144,7 @@
 
                     <LinearLayout
                         android:id="@+id/layout_expand_4"
-                        android:layout_width="match_parent"
+                        android:layout_width="300dp"
                         android:layout_height="wrap_content"
                         android:background="#F5F5F5"
                         android:orientation="vertical"
@@ -164,6 +153,35 @@
 
             </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:animateLayoutChanges="true"
+                    android:layout_marginTop="22dp"
+                    >
+                    <Button
+                        android:id="@+id/reserve_button_5"
+                        android:layout_width="300dp"
+                        android:layout_height="97dp"
+                        android:text="기타 기기"
+                        android:textSize="10pt"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="70dp"
+                        android:layout_marginLeft="70dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/layout_expand_5"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:background="#F5F5F5"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 

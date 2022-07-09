@@ -42,8 +42,12 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.e(TAG, "사용자 정보 요청 실패", meError);
                             } else {
                                 System.out.println("로그인 완료");
+
                                 account = user.getKakaoAccount();
+                                Log.d("asdf", account.toString());
                                 Intent intent = new Intent(v.getContext(), MapFragmentActivity.class);
+
+                                intent.putExtra("profile_image", account.getProfile().getProfileImageUrl());
                                 startActivity(intent);
                             }
                             return null;

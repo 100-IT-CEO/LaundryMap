@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.kakao.sdk.user.UserApiClient;
@@ -68,14 +70,15 @@ public class MapFragmentActivity extends AppCompatActivity
     private NaverMap naverMap;
     private FusedLocationSource locationSource;
     private JSONArray washterias;
-    Toolbar toolbar;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
+    private Toolbar toolbar;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+
 
     private ArrayList<Marker> markers;
     private static final String HOST = "143.248.199.22";
     private static final String PORT = "80";
-
+    private static String profile_image_url;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,8 @@ public class MapFragmentActivity extends AppCompatActivity
         setContentView(R.layout.map_fragment_activity);
 
         Intent intent = getIntent();
+
+        profile_image_url = intent.getStringExtra("profile_image");
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.naverMap);
@@ -107,15 +112,35 @@ public class MapFragmentActivity extends AppCompatActivity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView)findViewById(R.id.navigation_view);
         View headerview = navigationView.getHeaderView(0);
+        ImageView imageView = (ImageView)headerview.findViewById(R.id.iv_image);
+        Glide.with(MapFragmentActivity.this).load(profile_image_url).into(imageView);
+
+        Button reserve_cancel_btn = (Button)headerview.findViewById(R.id.reserve_cancel_btn);
         TextView reserve_washteria_name= (TextView)headerview.findViewById(R.id.reserve_washteria_name);
         TextView reserve_washer_type = (TextView)headerview.findViewById(R.id.reserve_washer_type);
         TextView reserve_start_time = (TextView)headerview.findViewById(R.id.reserve_start_time);
-        Button reserve_cancel_btn = (Button)headerview.findViewById(R.id.reserve_cancel_btn);
+        TextView reserve_open_reservation = (TextView)headerview.findViewById(R.id.navigation_bar_open_reservation);
+
+        reserve_open_reservation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout layout_expand = findViewById(R.id.layout_reservation);
+
+                if(layout_expand.getVisibility() == View.VISIBLE){
+                    layout_expand.animate().setDuration(200).alpha(0F);
+                    layout_expand.setVisibility(View.GONE);
+                }
+                else if(layout_expand.getVisibility() == View.GONE){
+                    layout_expand.setVisibility(View.VISIBLE);
+                    layout_expand.animate().setDuration(200).alpha(1F);
+                }
+            }
+        });
 
         RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
         //여기 카카오 아이디로..
 // String uri2 = String.format("http://"+HOST+"/load_reservation/"+String.valueOf(kakao_id));
-        String uri2 = String.format("http://"+HOST+"/load_reservation/123");
+        String uri2 = String.format("http://"+HOST+"/load_reservation?id=123");
         StringRequest stringRequest = new StringRequest(Request.Method.GET, uri2, new Response.Listener() {
             @Override
             public void onResponse(Object response) {
@@ -127,7 +152,7 @@ public class MapFragmentActivity extends AppCompatActivity
                     String start_time = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("reserve_start_time"));
                     start_time=start_time.substring(10,16);
                     switch(machine_type) {
-                        case "bid_dryer":
+                        case "big_dryer":
                             machine_type = "대형 건조기";
                             break;
                         case "dryer":
@@ -159,7 +184,7 @@ public class MapFragmentActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 // String uri2 = String.format("http://"+HOST+"/reservation/cancel/?id="+kakao_id);
-                String uri2 = String.format("http://"+HOST+"/reservation/cancel/?id=123");
+                String uri2 = String.format("http://"+HOST+"/reservation/cancel?id=123");
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, uri2, new Response.Listener() {
                     @Override
                     public void onResponse(Object response) {
@@ -282,7 +307,7 @@ public class MapFragmentActivity extends AppCompatActivity
                                 mDialog.setContentView(R.layout.map_popup_dialog);
 
 
-                                String url = "http://"+HOST+":"+PORT+"/washteria_machines/"+washteria_id;
+                                String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
 
                                 RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
 
@@ -319,9 +344,6 @@ public class MapFragmentActivity extends AppCompatActivity
                                                 TextView etc_num_tv = mDialog.findViewById(R.id.etc_num);
                                                 etc_num_tv.setText("기타 : " + etc_num + "대");
                                             }
-
-
-
                                         }
                                         catch (JSONException e) {
                                         e.printStackTrace();
@@ -335,8 +357,6 @@ public class MapFragmentActivity extends AppCompatActivity
                                 });
 
                                 requestQueue.add(stringRequest);
-
-
 
                                 TextView washteria_name_tv = mDialog.findViewById(R.id.washteria_name);
                                 washteria_name_tv.setText(marker.getCaptionText());

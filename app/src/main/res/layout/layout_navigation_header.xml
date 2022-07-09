@@ -68,6 +68,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/navigation_bar_open_reservation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="예약기록"
@@ -77,12 +78,12 @@
             android:layout_marginTop="10dp"
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
-            android:id="@+id/layout_expand_1"
+            android:id="@+id/layout_reservation"
             android:layout_width="300dp"
             android:layout_height="150dp"
             android:background="#c0eeff"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"

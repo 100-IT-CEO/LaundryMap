@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         Log.d("사용자", getKeyHash());
 
         NaverMapSdk.getInstance(this).setClient(new NaverMapSdk.NaverCloudPlatformClient("p0w8vochex"));
@@ -80,6 +81,20 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 else{
+                    UserApiClient.getInstance().me((user, meError) -> {
+                        if (meError != null) {
+                            Log.e("asdf", "사용자 정보 요청 실패", meError);
+                        } else {
+                            account = user.getKakaoAccount();
+                            Log.d("asdf", account.toString());
+                            Intent intent = new Intent(MainActivity.this, MapFragmentActivity.class);
+
+                            intent.putExtra("profile_image", account.getProfile().getProfileImageUrl());
+                            startActivity(intent);
+
+                        }
+                        return null;
+                    });
                     Log.d("asdf", "c");
                     startMapFragmentActivity();
                 }
