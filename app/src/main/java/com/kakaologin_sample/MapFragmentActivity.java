@@ -36,8 +36,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakaologin_sample.R;
 import com.naver.maps.geometry.LatLng;
@@ -50,10 +52,12 @@ import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
 import com.naver.maps.map.util.FusedLocationSource;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 
 
 public class MapFragmentActivity extends AppCompatActivity
@@ -62,14 +66,14 @@ public class MapFragmentActivity extends AppCompatActivity
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
     private NaverMap naverMap;
-    private Marker marker;
     private FusedLocationSource locationSource;
+    private JSONArray washterias;
     Toolbar toolbar;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
 
     private ArrayList<Marker> markers;
-    private static final String HOST = "143.248.225.56";
+    private static final String HOST = "143.248.199.22";
     private static final String PORT = "80";
 
 
@@ -100,8 +104,8 @@ public class MapFragmentActivity extends AppCompatActivity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 //header change
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView)findViewById(R.id.navigation_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
         View headerview = navigationView.getHeaderView(0);
         TextView washer_type = (TextView) headerview.findViewById(R.id.washer_type);
         washer_type.setText("바꿧당 ㅋ ");
@@ -135,74 +139,159 @@ public class MapFragmentActivity extends AppCompatActivity
         naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
         naverMap.getUiSettings().setLocationButtonEnabled(true);
 
-
-        load_markers();
-        // for test
-        Marker marker = new Marker();
-        marker.setPosition(new LatLng(37.5670135, 126.9783740));
-        marker.setMap(naverMap);
-
-
-
-        marker.setOnClickListener(new Overlay.OnClickListener() {
-            @Override
-            public boolean onClick(@NonNull Overlay overlay) {
-                Dialog mDialog = new Dialog(MapFragmentActivity.this);
-                mDialog.setContentView(R.layout.map_popup_dialog);
-                mDialog.getWindow().setDimAmount(0);
-                mDialog.getWindow().setGravity(Gravity.TOP);
-                mDialog.show();
-
-                request();
-
-                return false;
-            }
-        });
+        try {
+            load_markers();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void load_markers(){
-        washterias =
+    public void load_markers() throws JSONException {
 
-        markers;
-    }
+        String url = "http://" + HOST + ":" + PORT + "/washteria_location";
 
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-    public void request(){
-        String url = "http://143.248.225.56:80/test";
-
-        //JSON형식으로 데이터 통신을 진행합니다!
-        JSONObject testjson = new JSONObject();
-        //입력해둔 edittext의 id와 pw값을 받아와 put해줍니다 : 데이터를 json형식으로 바꿔 넣어주었습니다.
-        testjson.put("id", id.getText().toString());
-        testjson.put("password", pw.getText().toString());
-        String jsonString = testjson.toString(); //완성된 json 포맷
-
-        final RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,testjson, new Response.Listener<JSONObject>() {
-
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(Object response) {
+                Log.d("asdf", response.toString());
+
                 try {
                     JSONObject jsonObject = new JSONObject(response.toString());
+                    markers = new ArrayList<Marker>();
+                    washterias = jsonObject.getJSONArray("result");
+                    Log.d("asdf", washterias.toString());
 
-                    String resultId = jsonObject.getString("approve_id");
-                    String resultPassword = jsonObject.getString("approve_pw");
+                    for (int i = 0; i < washterias.length(); i++) {
+                        JSONObject washteria = washterias.getJSONObject(i);
 
-                } catch (Exception e) {
+                        int washteria_id = washteria.getInt("washteria_id");
+                        String washteria_name = washteria.getString("name");
+                        int washer_big_num = washteria.getInt("washer_big_num");
+                        int washer_medium_num = washteria.getInt("washer_medium_num");
+                        int dryer_big_num  = washteria.getInt("dryer_big_num");
+                        int dryer_medium_num  = washteria.getInt("dryer_medium_num");
+
+                        Marker marker = new Marker();
+                        marker.setPosition(new LatLng(washteria.getDouble("locationX"), washteria.getDouble("locationY")));
+                        marker.setCaptionText(washteria_name);
+                        marker.setCaptionRequestedWidth(200);
+                        marker.setTag(washteria_id);
+
+                        Log.d("asdf", marker.getTag() + " : " + marker.getPosition().toString());
+                        marker.setMap(naverMap);
+
+                        marker.setOnClickListener(new Overlay.OnClickListener() {
+                            @Override
+                            public boolean onClick(@NonNull Overlay overlay) {
+                                Dialog mDialog = new Dialog(MapFragmentActivity.this);
+                                mDialog.setContentView(R.layout.map_popup_dialog);
+
+
+                                String url = "http://"+HOST+":"+PORT+"/washteria_machines/"+washteria_id;
+
+                                RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
+
+                                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener(){
+                                    @Override
+                                    public void onResponse(Object response) {
+                                        try {
+                                            JSONObject jsonObject = new JSONObject(response.toString());
+
+                                            JSONArray machines = jsonObject.getJSONArray("result");
+
+                                            int washer_num = 0;
+                                            int dryer_num = 0;
+                                            int etc_num = 0;
+
+                                            for(int i=0; i<machines.length(); i++){
+                                                JSONObject machine = machines.getJSONObject(i);
+                                                int status = machine.getInt("status");
+                                                String machine_type = machine.getString("machine_type");
+
+                                                if(status == 0){
+                                                    switch(machine_type){
+                                                        case "big_washer" : washer_num += 1; break;
+                                                        case "washer" : washer_num += 1; break;
+                                                        case "big_dryer" : dryer_num += 1; break;
+                                                        case "dryer" : dryer_num += 1; break;
+                                                        default : etc_num += 1; break;
+                                                    }
+                                                }
+                                                TextView washer_num_tv = mDialog.findViewById(R.id.washer_num);
+                                                washer_num_tv.setText("세탁기 : " + washer_num + "대");
+                                                TextView dryer_num_tv = mDialog.findViewById(R.id.dryer_num);
+                                                dryer_num_tv.setText("건조기 : " + dryer_num + "대");
+                                                TextView etc_num_tv = mDialog.findViewById(R.id.etc_num);
+                                                etc_num_tv.setText("기타 : " + etc_num + "대");
+                                            }
+
+
+
+                                        }
+                                        catch (JSONException e) {
+                                        e.printStackTrace();
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.d("asdf","에러: " + error.toString());
+                                    }
+                                });
+
+                                requestQueue.add(stringRequest);
+
+
+
+                                TextView washteria_name_tv = mDialog.findViewById(R.id.washteria_name);
+                                washteria_name_tv.setText(marker.getCaptionText());
+
+                                TextView washer_num = mDialog.findViewById(R.id.washer_num);
+//                                washer_num.setText()
+                                TextView dryer_num = mDialog.findViewById(R.id.dryer_num);
+//                                dryer_num.setText()
+                                TextView etc_num = mDialog.findViewById(R.id.etc_num);
+//                                etc_num.setText()
+
+                                Button open_reservation = mDialog.findViewById(R.id.open_reservation);
+                                open_reservation.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(MapFragmentActivity.this, ReserveActivity.class);
+                                        intent.putExtra("washteria_id", washteria_id);
+                                        intent.putExtra("washteria_name", washteria_name);
+                                        intent.putExtra("washer_big_num", washer_big_num);
+                                        intent.putExtra("washer_num", washer_medium_num);
+                                        intent.putExtra("dryer_big_num", dryer_big_num);
+                                        intent.putExtra("dryer_num", dryer_medium_num);
+                                        startActivity(intent);
+                                    }
+                                });
+
+                                mDialog.getWindow().setDimAmount(0);
+                                mDialog.getWindow().setGravity(Gravity.BOTTOM);
+                                mDialog.show();
+
+                                return false;
+                            }
+                        });
+                        markers.add(marker);
+                    }
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            //서버로 데이터 전달 및 응답 받기에 실패한 경우 아래 코드가 실행됩니다.
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                //Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                //에러
+                Log.d("asdf", "에러: " + error.toString());
             }
         });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        requestQueue.add(jsonObjectRequest);
-        //
+
+        requestQueue.add(stringRequest);
     }
 
     @Override

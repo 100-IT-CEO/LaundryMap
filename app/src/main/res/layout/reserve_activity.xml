@@ -20,7 +20,7 @@
          />
 
     <TextView
-        android:id="@+id/reserve_text_when"
+        android:id="@+id/reserve_text_where"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
