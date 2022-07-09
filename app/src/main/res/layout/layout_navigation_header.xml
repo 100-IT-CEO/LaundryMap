@@ -90,7 +90,7 @@
                 android:layout_marginTop="10dp">
 
                 <TextView
-                    android:id="@+id/reserve_location"
+                    android:id="@+id/reserve_washteria_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="크린토피아"
@@ -117,7 +117,7 @@
                 android:layout_height="40dp">
 
                 <TextView
-                    android:id="@+id/washer_type"
+                    android:id="@+id/reserve_washer_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="중형세탁기" />
@@ -128,7 +128,7 @@
                     android:layout_weight="1" />
 
                 <TextView
-                    android:id="@+id/reserve_time"
+                    android:id="@+id/reserve_start_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
@@ -138,6 +138,7 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/reserve_cancel_btn"
                 android:layout_width="150dp"
                 android:layout_height="40dp"
                 android:background="@drawable/blue_btn"

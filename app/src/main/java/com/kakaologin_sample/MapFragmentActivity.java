@@ -105,11 +105,104 @@ public class MapFragmentActivity extends AppCompatActivity
 
 //header change
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView = (NavigationView)findViewById(R.id.navigation_view);
         View headerview = navigationView.getHeaderView(0);
-        TextView washer_type = (TextView) headerview.findViewById(R.id.washer_type);
-        washer_type.setText("바꿧당 ㅋ ");
+        TextView reserve_washteria_name= (TextView)headerview.findViewById(R.id.reserve_washteria_name);
+        TextView reserve_washer_type = (TextView)headerview.findViewById(R.id.reserve_washer_type);
+        TextView reserve_start_time = (TextView)headerview.findViewById(R.id.reserve_start_time);
+        Button reserve_cancel_btn = (Button)headerview.findViewById(R.id.reserve_cancel_btn);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
+        //여기 카카오 아이디로..
+// String uri2 = String.format("http://"+HOST+"/load_reservation/"+String.valueOf(kakao_id));
+        String uri2 = String.format("http://"+HOST+"/load_reservation/123");
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, uri2, new Response.Listener() {
+            @Override
+            public void onResponse(Object response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    Log.d("response",jsonObject.toString());
+                    String name = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("name"));
+                    String machine_type = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("machine_type"));
+                    String start_time = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("reserve_start_time"));
+                    start_time=start_time.substring(10,16);
+                    switch(machine_type) {
+                        case "bid_dryer":
+                            machine_type = "대형 건조기";
+                            break;
+                        case "dryer":
+                            machine_type ="중형 건조기";
+                            break;
+                        case "big_washer" :
+                            machine_type ="대형 세탁기";
+                            break;
+                        case "washer":
+                            machine_type ="중형 세탁기";
+                            break;
+                    }
+                    reserve_washteria_name.setText(name);
+                    reserve_washer_type.setText(machine_type);
+                    reserve_start_time.setText(start_time);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("asdf", "에러: " + error.toString());
+            }
+        });
+        requestQueue.add(stringRequest);
+
+        reserve_cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // String uri2 = String.format("http://"+HOST+"/reservation/cancel/?id="+kakao_id);
+                String uri2 = String.format("http://"+HOST+"/reservation/cancel/?id=123");
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, uri2, new Response.Listener() {
+                    @Override
+                    public void onResponse(Object response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response.toString());
+                            Log.d("response",jsonObject.toString());
+                            String name = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("name"));
+                            String machine_type = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("machine_type"));
+                            String start_time = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("reserve_start_time"));
+                            start_time=start_time.substring(10,16);
+                            switch(machine_type) {
+                                case "bid_dryer":
+                                    machine_type = "대형 건조기";
+                                    break;
+                                case "dryer":
+                                    machine_type ="중형 건조기";
+                                    break;
+                                case "big_washer" :
+                                    machine_type ="대형 세탁기";
+                                    break;
+                                case "washer":
+                                    machine_type ="중형 세탁기";
+                                    break;
+                            }
+                            reserve_washteria_name.setText(name);
+                            reserve_washer_type.setText(machine_type);
+                            reserve_start_time.setText(start_time);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("asdf", "에러: " + error.toString());
+                    }
+                });
+                requestQueue.add(stringRequest);
+            }});
+
     }
+
+
 
 
     @Override
