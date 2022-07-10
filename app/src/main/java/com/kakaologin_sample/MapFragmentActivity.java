@@ -82,10 +82,16 @@ public class MapFragmentActivity extends AppCompatActivity
 
 
     private ArrayList<Marker> markers;
-    private static final String HOST = "143.248.199.17";
+    private static final String HOST = "10.0.2.2";
     private static final String PORT = "80";
     private static String profile_image_url;
 
+    //추가
+    private static String nickname;
+    private static String kakao_id;
+    private TextView tv_name;
+    private TextView TEL;
+    private ImageView image;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +101,13 @@ public class MapFragmentActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         profile_image_url = intent.getStringExtra("profile_image");
+
+        //추가
+        nickname=intent.getStringExtra("nickname");
+        kakao_id=intent.getStringExtra("kakao_id");
+        tv_name = (TextView)findViewById(R.id.tv_name);
+
+
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.naverMap);
@@ -126,10 +139,11 @@ public class MapFragmentActivity extends AppCompatActivity
         TextView reserve_start_time = (TextView)headerview.findViewById(R.id.reserve_start_time);
         TextView reserve_open_reservation = (TextView)headerview.findViewById(R.id.navigation_bar_open_reservation);
 
-        //추가
         LinearLayout layout_reservation = (LinearLayout)headerview.findViewById(R.id.layout_reservation);
         LinearLayout layout_goto_reservation = (LinearLayout)headerview.findViewById(R.id.layout_goto_reservation);
         layout_goto_reservation.setVisibility(View.GONE);
+        //추가
+        layout_reservation.setVisibility(View.GONE);
         TextView no_reservation_date = (TextView)headerview.findViewById(R.id.no_reservation_date);
         Button go_to_reserveCreateion = (Button)headerview.findViewById(R.id.go_to_reserveCreateion);
 
@@ -144,15 +158,17 @@ public class MapFragmentActivity extends AppCompatActivity
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
                     layout_expand.setVisibility(View.VISIBLE);
+                    //추가
+                    tv_name.setText(nickname);
                     showView(layout_expand);
                 }
             }
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
-        //여기 카카오 아이디로..
-// String uri2 = String.format("http://"+HOST+"/load_reservation/"+String.valueOf(kakao_id));
-        String uri2 = String.format("http://"+HOST+"/load_reservation?id=123");
+        //추가 (수정함)
+   //     String uri2 = String.format("http://"+HOST+"/load_reservation?id=123");
+        String uri2 = String.format("http://"+HOST+"/load_reservation?id="+kakao_id);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, uri2, new Response.Listener() {
             @Override
             public void onResponse(Object response) {
@@ -188,6 +204,8 @@ public class MapFragmentActivity extends AppCompatActivity
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("asdf", "에러: " + error.toString());
+                //추가
+                showView(layout_goto_reservation);
             }
         });
         requestQueue.add(stringRequest);
@@ -340,13 +358,13 @@ public class MapFragmentActivity extends AppCompatActivity
                         int dryer_medium_num  = washteria.getInt("dryer_medium_num");
 
                         Marker marker = new Marker();
-                        marker.setPosition(new LatLng(washteria.getDouble("locationX"), washteria.getDouble("locationY")));
+                        marker.setPosition(new LatLng(washteria.getDouble("locationY"), washteria.getDouble("locationX")));
                         marker.setCaptionText(washteria_name);
                         marker.setCaptionRequestedWidth(200);
                         marker.setTag(washteria_id);
                         marker.setWidth(120);
                         marker.setHeight(120);
-                        marker.setIcon(OverlayImage.fromResource(R.drawable.washer2));
+                        marker.setIcon(OverlayImage.fromResource(R.drawable.ic_launcher_foreground));
 
                         Log.d("asdf", marker.getTag() + " : " + marker.getPosition().toString());
                         marker.setMap(naverMap);
@@ -357,7 +375,6 @@ public class MapFragmentActivity extends AppCompatActivity
                                 Dialog mDialog = new Dialog(MapFragmentActivity.this);
                                 mDialog.setContentView(R.layout.map_popup_dialog);
                                 mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
 
                                 String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
 
@@ -375,6 +392,9 @@ public class MapFragmentActivity extends AppCompatActivity
                                             int dryer_num = 0;
                                             int etc_num = 0;
 
+                                            //추가
+                                            String Tel = washteria.getString("TEL") ;
+                                            String washteriaImageurl = washteria.getString("thumUrl");
                                             for(int i=0; i<machines.length(); i++){
                                                 JSONObject machine = machines.getJSONObject(i);
                                                 int status = machine.getInt("status");
@@ -389,6 +409,12 @@ public class MapFragmentActivity extends AppCompatActivity
                                                         default : etc_num += 1; break;
                                                     }
                                                 }
+                                                //추가
+                                                TextView TEL = mDialog.findViewById(R.id.TEL);
+                                                TEL.setText(Tel);
+                                                ImageView Dialogimage = mDialog.findViewById(R.id.image);
+                                                Glide.with(MapFragmentActivity.this).load(washteriaImageurl).into(Dialogimage);
+
                                                 TextView washer_num_tv = mDialog.findViewById(R.id.washer_num);
                                                 washer_num_tv.setText("세탁기 : " + washer_num + "대");
                                                 TextView dryer_num_tv = mDialog.findViewById(R.id.dryer_num);

@@ -32,6 +32,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 UserApiClient.getInstance().loginWithKakaoTalk(v.getContext(),(oAuthToken, error) -> {
                     if (error != null) {
+                        //추가  지워야대
+                        Intent intent = new Intent(v.getContext(), MapFragmentActivity.class);
+                        startActivity(intent);
                         Toast.makeText(v.getContext(), "로그인 실패" + error.toString(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "로그인 실패", error);
                     } else if (oAuthToken != null) {
@@ -42,12 +45,13 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.e(TAG, "사용자 정보 요청 실패", meError);
                             } else {
                                 System.out.println("로그인 완료");
-
                                 account = user.getKakaoAccount();
                                 Log.d("asdf", account.toString());
                                 Intent intent = new Intent(v.getContext(), MapFragmentActivity.class);
-
                                 intent.putExtra("profile_image", account.getProfile().getProfileImageUrl());
+                                intent.putExtra("nickname",account.getProfile().getNickname());
+                                intent.putExtra("nickname",account.getProfile().getNickname());
+                                intent.putExtra("kakao_id",user.getId());
                                 startActivity(intent);
                             }
                             return null;

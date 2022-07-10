@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("사용자", getKeyHash());
 
         NaverMapSdk.getInstance(this).setClient(new NaverMapSdk.NaverCloudPlatformClient("p0w8vochex"));
-
+        startMapFragmentActivity();
         if(AuthApiClient.getInstance().hasToken()){
             UserApiClient.getInstance().accessTokenInfo((accessTokenInfo, error) -> {
                 if(error != null){
@@ -88,8 +88,11 @@ public class MainActivity extends AppCompatActivity {
                             account = user.getKakaoAccount();
                             Log.d("asdf", account.toString());
                             Intent intent = new Intent(MainActivity.this, MapFragmentActivity.class);
-
+                            //추가
                             intent.putExtra("profile_image", account.getProfile().getProfileImageUrl());
+                            intent.putExtra("nickname",account.getProfile().getNickname());
+                            intent.putExtra("kakao_id",user.getId());
+
                             startActivity(intent);
 
                         }
