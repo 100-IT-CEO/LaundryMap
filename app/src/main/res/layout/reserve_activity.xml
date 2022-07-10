@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:text="세탁기 예약하기"
         android:textAlignment="center"
-
         android:textColor="#1A1A1A"
         android:textSize="15pt"
         android:layout_margin="20dp"
@@ -56,7 +55,10 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:layout_marginRight="70dp"
-                        android:layout_marginLeft="70dp">
+                        android:layout_marginLeft="70dp"
+                        android:clickable="true"
+                        android:background="?android:selectableItemBackground"
+                        android:foreground="?attr/selectableItemBackground">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -167,7 +169,10 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="70dp"
-                    android:layout_marginLeft="70dp">
+                    android:layout_marginLeft="70dp"
+                    android:clickable="true"
+                    android:background="?android:selectableItemBackground"
+                    android:foreground="?attr/selectableItemBackground">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -277,7 +282,10 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="70dp"
-                    android:layout_marginLeft="70dp">
+                    android:layout_marginLeft="70dp"
+                    android:clickable="true"
+                    android:background="?android:selectableItemBackground"
+                    android:foreground="?attr/selectableItemBackground">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -387,7 +395,10 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="70dp"
-                    android:layout_marginLeft="70dp">
+                    android:layout_marginLeft="70dp"
+                    android:clickable="true"
+                    android:background="?android:selectableItemBackground"
+                    android:foreground="?attr/selectableItemBackground">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -497,7 +508,10 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="70dp"
-                    android:layout_marginLeft="70dp">
+                    android:layout_marginLeft="70dp"
+                    android:clickable="true"
+                    android:background="?android:selectableItemBackground"
+                    android:foreground="?attr/selectableItemBackground">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

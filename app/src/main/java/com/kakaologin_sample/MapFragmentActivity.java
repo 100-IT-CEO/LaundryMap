@@ -82,7 +82,7 @@ public class MapFragmentActivity extends AppCompatActivity
 
 
     private ArrayList<Marker> markers;
-    private static final String HOST = "10.0.2.2";
+    private static final String HOST = "143.248.199.17";
     private static final String PORT = "80";
     private static String profile_image_url;
 
@@ -92,6 +92,8 @@ public class MapFragmentActivity extends AppCompatActivity
     private TextView tv_name;
     private TextView TEL;
     private ImageView image;
+    private Boolean flag;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,10 +106,10 @@ public class MapFragmentActivity extends AppCompatActivity
 
         //추가
         nickname=intent.getStringExtra("nickname");
-        kakao_id=intent.getStringExtra("kakao_id");
-        tv_name = (TextView)findViewById(R.id.tv_name);
 
+        kakao_id= String.valueOf(intent.getLongExtra("kakao_id",0L));
 
+        Log.d("map", nickname + " " + kakao_id);
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.naverMap);
@@ -132,7 +134,8 @@ public class MapFragmentActivity extends AppCompatActivity
 
         ImageView imageView = (ImageView)headerview.findViewById(R.id.iv_image);
         Glide.with(MapFragmentActivity.this).load(profile_image_url).into(imageView);
-
+        tv_name = (TextView)headerview.findViewById(R.id.tv_name);
+        tv_name.setText(nickname);
         Button reserve_cancel_btn = (Button)headerview.findViewById(R.id.reserve_cancel_btn);
         TextView reserve_washteria_name= (TextView)headerview.findViewById(R.id.reserve_washteria_name);
         TextView reserve_washer_type = (TextView)headerview.findViewById(R.id.reserve_washer_type);
@@ -148,22 +151,6 @@ public class MapFragmentActivity extends AppCompatActivity
         Button go_to_reserveCreateion = (Button)headerview.findViewById(R.id.go_to_reserveCreateion);
 
 
-        reserve_open_reservation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LinearLayout layout_expand = findViewById(R.id.layout_reservation);
-
-                if(layout_expand.getVisibility() == View.VISIBLE){
-                    hideView(layout_expand);
-                }
-                else if(layout_expand.getVisibility() == View.GONE){
-                    layout_expand.setVisibility(View.VISIBLE);
-                    //추가
-                    tv_name.setText(nickname);
-                    showView(layout_expand);
-                }
-            }
-        });
 
         RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
         //추가 (수정함)
@@ -196,6 +183,7 @@ public class MapFragmentActivity extends AppCompatActivity
                     reserve_washteria_name.setText(name);
                     reserve_washer_type.setText(machine_type);
                     reserve_start_time.setText(start_time);
+                    flag = true;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -205,10 +193,36 @@ public class MapFragmentActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
                 Log.d("asdf", "에러: " + error.toString());
                 //추가
+                flag = false;
                 showView(layout_goto_reservation);
             }
         });
         requestQueue.add(stringRequest);
+
+        reserve_open_reservation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout layout_reservation = findViewById(R.id.layout_reservation);
+                LinearLayout layout_goto_reservation = findViewById(R.id.layout_goto_reservation);
+                if (flag) {
+                    if (layout_reservation.getVisibility()==View.VISIBLE){
+                        layout_reservation.setVisibility(View.GONE);
+                    }else{
+                        layout_reservation.setVisibility(View.VISIBLE);
+                    }
+                    layout_goto_reservation.setVisibility(View.GONE);
+                }
+                else{
+                    if (layout_goto_reservation.getVisibility()==View.VISIBLE){
+                        layout_goto_reservation.setVisibility(View.GONE);
+                    }else{
+                        layout_goto_reservation.setVisibility(View.VISIBLE);
+                    }
+                    layout_reservation.setVisibility(View.GONE);
+                }
+
+            }
+        });
 
         reserve_cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,7 +378,7 @@ public class MapFragmentActivity extends AppCompatActivity
                         marker.setTag(washteria_id);
                         marker.setWidth(120);
                         marker.setHeight(120);
-                        marker.setIcon(OverlayImage.fromResource(R.drawable.ic_launcher_foreground));
+                        marker.setIcon(OverlayImage.fromResource(R.drawable.washer2));
 
                         Log.d("asdf", marker.getTag() + " : " + marker.getPosition().toString());
                         marker.setMap(naverMap);
@@ -375,6 +389,18 @@ public class MapFragmentActivity extends AppCompatActivity
                                 Dialog mDialog = new Dialog(MapFragmentActivity.this);
                                 mDialog.setContentView(R.layout.map_popup_dialog);
                                 mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                                String Tel = null;
+                                try {
+                                    Tel = washteria.getString("TEL");
+                                    String washteriaImageurl = washteria.getString("thumUrl");
+                                    ImageView Dialogimage = mDialog.findViewById(R.id.image);
+                                    Glide.with(MapFragmentActivity.this).load(washteriaImageurl).into(Dialogimage);
+                                    TextView TEL = mDialog.findViewById(R.id.TEL);
+                                    TEL.setText(Tel);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
 
                                 String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
 
@@ -392,9 +418,6 @@ public class MapFragmentActivity extends AppCompatActivity
                                             int dryer_num = 0;
                                             int etc_num = 0;
 
-                                            //추가
-                                            String Tel = washteria.getString("TEL") ;
-                                            String washteriaImageurl = washteria.getString("thumUrl");
                                             for(int i=0; i<machines.length(); i++){
                                                 JSONObject machine = machines.getJSONObject(i);
                                                 int status = machine.getInt("status");
@@ -409,11 +432,7 @@ public class MapFragmentActivity extends AppCompatActivity
                                                         default : etc_num += 1; break;
                                                     }
                                                 }
-                                                //추가
-                                                TextView TEL = mDialog.findViewById(R.id.TEL);
-                                                TEL.setText(Tel);
-                                                ImageView Dialogimage = mDialog.findViewById(R.id.image);
-                                                Glide.with(MapFragmentActivity.this).load(washteriaImageurl).into(Dialogimage);
+
 
                                                 TextView washer_num_tv = mDialog.findViewById(R.id.washer_num);
                                                 washer_num_tv.setText("세탁기 : " + washer_num + "대");

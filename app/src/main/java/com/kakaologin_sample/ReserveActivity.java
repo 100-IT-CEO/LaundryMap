@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -57,6 +59,7 @@ public class ReserveActivity extends AppCompatActivity{
         CardView button2 = findViewById(R.id.reserve_button_2);
         CardView button3 = findViewById(R.id.reserve_button_3);
         CardView button4 = findViewById(R.id.reserve_button_4);
+        CardView button5 = findViewById(R.id.reserve_button_5);
 
         String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
 
@@ -70,16 +73,34 @@ public class ReserveActivity extends AppCompatActivity{
 
                     Log.d("asdf", machines.toString());
 
+                    LinearLayout layout_expand1 = findViewById(R.id.layout_expand_1);
+                    LinearLayout layout_expand2 = findViewById(R.id.layout_expand_2);
+                    LinearLayout layout_expand3 = findViewById(R.id.layout_expand_3);
+                    LinearLayout layout_expand4 = findViewById(R.id.layout_expand_4);
+                    LinearLayout layout_expand5 = findViewById(R.id.layout_expand_5);
+
+                    TextView big_washer_num = findViewById(R.id.big_washer_num);
+                    TextView washer_num = findViewById(R.id.washer_num);
+                    TextView big_dryer_num = findViewById(R.id.big_dryer_num);
+                    TextView dryer_num = findViewById(R.id.dryer_num);
+                    TextView etc_num = findViewById(R.id.etc_num);
+
+                    int[] count= {0, 0, 0, 0, 0};
+
                     for(int i=0; i<machines.length(); i++){
                         JSONObject machine = machines.getJSONObject(i);
                         int status = machine.getInt("status");
                         String machine_type = machine.getString("machine_type");
 
-                        LinearLayout layout_expand1 = findViewById(R.id.layout_expand_1);
-                        LinearLayout layout_expand2 = findViewById(R.id.layout_expand_2);
-                        LinearLayout layout_expand3 = findViewById(R.id.layout_expand_3);
-                        LinearLayout layout_expand4 = findViewById(R.id.layout_expand_4);
-                        LinearLayout layout_expand5 = findViewById(R.id.layout_expand_5);
+                        if(status == 0){
+                            switch(machine_type){
+                                case "big_washer" : count[0] += 1; break;
+                                case "washer" : count[1] += 1; break;
+                                case "big_dryer" : count[2] += 1; break;
+                                case "dryer" : count[3] += 1; break;
+                                default : count[4] += 1; break;
+                            }
+                        }
 
                         switch(machine_type){
                             case "big_washer" : create(layout_expand1, machine, status); break;
@@ -88,8 +109,14 @@ public class ReserveActivity extends AppCompatActivity{
                             case "dryer" : create(layout_expand4, machine, status); break;
                             default : create(layout_expand5, machine, status);
                         }
-
                     }
+
+                    big_washer_num.setText(String.valueOf(count[0]));
+                    washer_num.setText(String.valueOf(count[1]));
+                    big_dryer_num.setText(String.valueOf(count[2]));
+                    dryer_num.setText(String.valueOf(count[3]));
+                    etc_num.setText(String.valueOf(count[4]));
+
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -112,12 +139,10 @@ public class ReserveActivity extends AppCompatActivity{
                 LinearLayout layout_expand = findViewById(R.id.layout_expand_1);
 
                 if(layout_expand.getVisibility() == View.VISIBLE){
-                    layout_expand.setVisibility(View.GONE);
-                    layout_expand.animate().setDuration(200).alpha(0F);
+                    hideView(layout_expand);
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
-                    layout_expand.setVisibility(View.VISIBLE);
-                    layout_expand.animate().setDuration(200).alpha(0F);
+                    showView(layout_expand);
                 }
             }
         });
@@ -129,12 +154,10 @@ public class ReserveActivity extends AppCompatActivity{
                 LinearLayout layout_expand = findViewById(R.id.layout_expand_2);
 
                 if(layout_expand.getVisibility() == View.VISIBLE){
-                    layout_expand.setVisibility(View.GONE);
-                    layout_expand.animate().setDuration(200).alpha(0F);
+                    hideView(layout_expand);
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
-                    layout_expand.setVisibility(View.VISIBLE);
-                    layout_expand.animate().setDuration(200).alpha(0F);
+                    showView(layout_expand);
                 }
             }
         });
@@ -145,12 +168,10 @@ public class ReserveActivity extends AppCompatActivity{
                 LinearLayout layout_expand = findViewById(R.id.layout_expand_3);
 
                 if(layout_expand.getVisibility() == View.VISIBLE){
-                    layout_expand.setVisibility(View.GONE);
-                    layout_expand.animate().setDuration(200).alpha(0F);
+                    hideView(layout_expand);
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
-                    layout_expand.setVisibility(View.VISIBLE);
-                    layout_expand.animate().setDuration(200).alpha(0F);
+                    showView(layout_expand);
                 }
             }
         });
@@ -161,15 +182,53 @@ public class ReserveActivity extends AppCompatActivity{
                 LinearLayout layout_expand = findViewById(R.id.layout_expand_4);
 
                 if(layout_expand.getVisibility() == View.VISIBLE){
-                    layout_expand.setVisibility(View.GONE);
-                    layout_expand.animate().setDuration(200).alpha(0F);
+                    hideView(layout_expand);
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
-                    layout_expand.setVisibility(View.VISIBLE);
-                    layout_expand.animate().setDuration(200).alpha(0F);
+                    showView(layout_expand);
                 }
             }
         });
+    }
+
+
+
+    private void showView(final View view){
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up);
+        //use this to make it longer:  animation.setDuration(1000);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+        });
+
+        view.startAnimation(animation);
+    }
+
+    private void hideView(final View view){
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_down);
+        //use this to make it longer:  animation.setDuration(1000);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(View.GONE);
+            }
+        });
+
+        view.startAnimation(animation);
     }
 
     public void create(LinearLayout linearLayout, JSONObject machine, int status){
@@ -192,7 +251,6 @@ public class ReserveActivity extends AppCompatActivity{
                     @Override
                     public void onClick(View view) {
                         String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
-
                         RequestQueue requestQueue = Volley.newRequestQueue(ReserveActivity.this);
                         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener(){
                             @Override
@@ -201,14 +259,7 @@ public class ReserveActivity extends AppCompatActivity{
                                     JSONObject jsonObject = new JSONObject(response.toString());
                                     JSONArray machines = jsonObject.getJSONArray("result");
 
-                                    Log.d("asdf", machines.toString());
 
-                                    for(int i=0; i<machines.length(); i++){
-                                        JSONObject machine = machines.getJSONObject(i);
-                                        int status = machine.getInt("status");
-                                        String machine_type = machine.getString("machine_type");
-
-                                    }
                                 }
                                 catch (JSONException e) {
                                     e.printStackTrace();

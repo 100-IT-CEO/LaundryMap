@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, MapFragmentActivity.class);
                             //추가
                             intent.putExtra("profile_image", account.getProfile().getProfileImageUrl());
-                            intent.putExtra("nickname",account.getProfile().getNickname());
-                            intent.putExtra("kakao_id",user.getId());
-
+                            intent.putExtra("nickname", account.getProfile().getNickname());
+                            intent.putExtra("kakao_id", user.getId());
+                            Log.d("mainactivity", account.getProfile().getNickname() + " " + user.getId());
                             startActivity(intent);
 
                         }
