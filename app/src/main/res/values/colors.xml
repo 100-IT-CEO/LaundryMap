@@ -10,4 +10,10 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="lightblue">#7CD2F8</color>
+    <color name="blue">#00AFFF</color>
+    <color name="darkblue">#3F51B5</color>
+    <color name="orange">#FF8200</color>
+    <color name="red">#FF0000</color>
+
 </resources>

@@ -18,9 +18,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/Theme.NavigationDrawer">
+            android:theme="@style/Theme.NavigationDrawer"/>
 
-        </androidx.appcompat.widget.Toolbar>
         <fragment android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/naverMap"

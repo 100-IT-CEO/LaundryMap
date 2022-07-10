@@ -25,16 +25,18 @@
         >
 
         <TextView
+            android:fontFamily="@font/nanumsquareroundeb"
             android:id="@+id/tv_name"
-            android:gravity="center"
-            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:text ="개휘"
-            android:textStyle="bold"
+            android:gravity="center"
+            android:text="개휘"
             android:textColor="#000000"
-            android:textSize="24sp"/>
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/gotoMypage_btn"
             android:layout_width="wrap_content"
@@ -65,10 +67,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="15dp">
 
         <TextView
             android:id="@+id/navigation_bar_open_reservation"
+            android:fontFamily="@font/nanumsquareroundlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="예약기록"
@@ -83,7 +87,7 @@
             android:layout_height="150dp"
             android:background="#c0eeff"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -92,6 +96,7 @@
 
                 <TextView
                     android:id="@+id/reserve_washteria_name"
+                    android:fontFamily="@font/nanumsquareroundeb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="크린토피아"
@@ -104,6 +109,7 @@
                     android:layout_weight="1" />
 
                 <TextView
+                    android:fontFamily="@font/nanumsquareroundb"
                     android:id="@+id/reserve_state"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -118,6 +124,7 @@
                 android:layout_height="40dp">
 
                 <TextView
+                    android:fontFamily="@font/nanumsquareroundb"
                     android:id="@+id/reserve_washer_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -129,6 +136,7 @@
                     android:layout_weight="1" />
 
                 <TextView
+                    android:fontFamily="@font/nanumsquareroundeb"
                     android:id="@+id/reserve_start_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -142,10 +150,58 @@
                 android:id="@+id/reserve_cancel_btn"
                 android:layout_width="150dp"
                 android:layout_height="40dp"
-                android:background="@drawable/blue_btn"
+                android:background="@drawable/dark_blue_btn"
+                android:fontFamily="@font/nanumsquareroundeb"
                 android:text="예약취소"
                 android:textColor="#FFFFFF" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:paddingLeft="20dp"
+            android:id="@+id/layout_goto_reservation"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
+            android:background="#c0eeff"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/no_reservation_date"
+                    android:fontFamily="@font/nanumsquareroundeb"
+                    android:layout_width="match_parent"
+                    android:textSize="15sp"
+                    android:layout_height="wrap_content"
+                    android:text="날짜" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:textSize="13sp"
+                android:layout_height="wrap_content"
+                android:text="등록된 예약이 없습니다!"/>
+
+            <Button
+                android:id="@+id/go_to_reserveCreateion"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/dark_blue_btn"
+                android:fontFamily="@font/nanumsquareroundeb"
+                android:text="예약하기"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
 
@@ -157,6 +213,7 @@
         android:gravity="center_vertical">
 
         <TextView
+            android:fontFamily="@font/nanumsquareroundlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="이용기록"
@@ -171,6 +228,7 @@
         android:gravity="center_vertical">
 
         <TextView
+            android:fontFamily="@font/nanumsquareroundlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="친구초대"
@@ -185,6 +243,7 @@
         android:gravity="center_vertical">
 
         <TextView
+            android:fontFamily="@font/nanumsquareroundlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="쿠폰"
@@ -207,6 +266,7 @@
         android:gravity="center_vertical">
 
         <TextView
+            android:fontFamily="@font/nanumsquareroundlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="공지 , 이벤트" />

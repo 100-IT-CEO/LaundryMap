@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -31,7 +32,7 @@ import java.net.URL;
 
 public class ReserveActivity extends AppCompatActivity{
 
-    private static final String HOST = "143.248.199.22";
+    private static final String HOST = "143.248.199.17";
     private static final String PORT = "80";
 
     private int washteria_id;
@@ -52,10 +53,10 @@ public class ReserveActivity extends AppCompatActivity{
 
         setContentView(R.layout.reserve_activity);
 
-        Button button1 = findViewById(R.id.reserve_button_1);
-        Button button2 = findViewById(R.id.reserve_button_2);
-        Button button3 = findViewById(R.id.reserve_button_3);
-        Button button4 = findViewById(R.id.reserve_button_4);
+        CardView button1 = findViewById(R.id.reserve_button_1);
+        CardView button2 = findViewById(R.id.reserve_button_2);
+        CardView button3 = findViewById(R.id.reserve_button_3);
+        CardView button4 = findViewById(R.id.reserve_button_4);
 
         String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
 
