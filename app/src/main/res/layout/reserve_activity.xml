@@ -147,9 +147,10 @@
                     android:id="@+id/layout_expand_1"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
-                    android:background="#F5F5F5"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    android:background="#00000000">
+
                 </LinearLayout>
 
             </LinearLayout>

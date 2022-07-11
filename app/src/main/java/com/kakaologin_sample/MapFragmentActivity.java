@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +84,7 @@ public class MapFragmentActivity extends AppCompatActivity
 
 
     private ArrayList<Marker> markers;
-    private static final String HOST = "143.248.199.17";
+    private static final String HOST = "143.248.199.127";
     private static final String PORT = "80";
     private static String profile_image_url;
 
@@ -93,6 +95,8 @@ public class MapFragmentActivity extends AppCompatActivity
     private TextView TEL;
     private ImageView image;
     private Boolean flag;
+    private TextView btn_logout;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,10 +110,7 @@ public class MapFragmentActivity extends AppCompatActivity
 
         //추가
         nickname=intent.getStringExtra("nickname");
-
         kakao_id= String.valueOf(intent.getLongExtra("kakao_id",0L));
-
-        Log.d("map", nickname + " " + kakao_id);
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.naverMap);
@@ -124,8 +125,7 @@ public class MapFragmentActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 왼쪽 상단 버튼 만들기
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher_foreground); //왼쪽 상단 버튼 아이콘 지정
+       
 
 //header change
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -134,8 +134,26 @@ public class MapFragmentActivity extends AppCompatActivity
 
         ImageView imageView = (ImageView)headerview.findViewById(R.id.iv_image);
         Glide.with(MapFragmentActivity.this).load(profile_image_url).into(imageView);
-        tv_name = (TextView)headerview.findViewById(R.id.tv_name);
+        TextView tv_name = headerview.findViewById(R.id.tv_name);
         tv_name.setText(nickname);
+
+        btn_logout = headerview.findViewById(R.id.btn_logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserApiClient.getInstance().logout(error -> {
+                    if (error != null) {
+                        Log.e("tag", "로그아웃 실패, SDK에서 토큰 삭제됨", error);
+                    } else {
+                        Log.e("tag", "로그아웃 성공, SDK에서 토큰 삭제됨");
+                        Intent goto_login_intent = new Intent(v.getContext(), LoginActivity.class);
+                        startActivity(goto_login_intent);
+                    }
+                    return null;
+                });
+            }
+        });
+
         Button reserve_cancel_btn = (Button)headerview.findViewById(R.id.reserve_cancel_btn);
         TextView reserve_washteria_name= (TextView)headerview.findViewById(R.id.reserve_washteria_name);
         TextView reserve_washer_type = (TextView)headerview.findViewById(R.id.reserve_washer_type);
@@ -145,16 +163,14 @@ public class MapFragmentActivity extends AppCompatActivity
         LinearLayout layout_reservation = (LinearLayout)headerview.findViewById(R.id.layout_reservation);
         LinearLayout layout_goto_reservation = (LinearLayout)headerview.findViewById(R.id.layout_goto_reservation);
         layout_goto_reservation.setVisibility(View.GONE);
-        //추가
         layout_reservation.setVisibility(View.GONE);
+
+
         TextView no_reservation_date = (TextView)headerview.findViewById(R.id.no_reservation_date);
         Button go_to_reserveCreateion = (Button)headerview.findViewById(R.id.go_to_reserveCreateion);
 
 
-
         RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
-        //추가 (수정함)
-   //     String uri2 = String.format("http://"+HOST+"/load_reservation?id=123");
         String uri2 = String.format("http://"+HOST+"/load_reservation?id="+kakao_id);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, uri2, new Response.Listener() {
             @Override
@@ -166,6 +182,7 @@ public class MapFragmentActivity extends AppCompatActivity
                     String machine_type = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("machine_type"));
                     String start_time = String.valueOf(jsonObject.getJSONArray("result").getJSONObject(0).getString("reserve_start_time"));
                     start_time=start_time.substring(10,16);
+                    flag=true;
                     switch(machine_type) {
                         case "big_dryer":
                             machine_type = "대형 건조기";
@@ -183,7 +200,7 @@ public class MapFragmentActivity extends AppCompatActivity
                     reserve_washteria_name.setText(name);
                     reserve_washer_type.setText(machine_type);
                     reserve_start_time.setText(start_time);
-                    flag = true;
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -193,8 +210,7 @@ public class MapFragmentActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
                 Log.d("asdf", "에러: " + error.toString());
                 //추가
-                flag = false;
-                showView(layout_goto_reservation);
+                flag=false;
             }
         });
         requestQueue.add(stringRequest);
@@ -224,6 +240,7 @@ public class MapFragmentActivity extends AppCompatActivity
             }
         });
 
+
         reserve_cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -252,7 +269,7 @@ public class MapFragmentActivity extends AppCompatActivity
                 requestQueue.add(stringRequest);
             }});
 
-//추가
+
         go_to_reserveCreateion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,6 +278,14 @@ public class MapFragmentActivity extends AppCompatActivity
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.custom_tool_bar, menu);
+        return true;
+    }
+
 
     //추가
     private String getTime() {
@@ -306,14 +331,13 @@ public class MapFragmentActivity extends AppCompatActivity
                 view.setVisibility(View.GONE);
             }
         });
-
         view.startAnimation(animation);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home: { // 왼쪽 상단 버튼 눌렀을 때
+            case R.id.btnCommunityNotification: { // 왼쪽 상단 버튼 눌렀을 때
                 drawerLayout.openDrawer(GravityCompat.END);
                 return true;
             }
@@ -353,13 +377,13 @@ public class MapFragmentActivity extends AppCompatActivity
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener() {
             @Override
             public void onResponse(Object response) {
-                Log.d("asdf", response.toString());
+         //       Log.d("asdf", response.toString());
 
                 try {
                     JSONObject jsonObject = new JSONObject(response.toString());
                     markers = new ArrayList<Marker>();
                     washterias = jsonObject.getJSONArray("result");
-                    Log.d("asdf", washterias.toString());
+                    //Log.d("asdf", washterias.toString());
 
                     for (int i = 0; i < washterias.length(); i++) {
                         JSONObject washteria = washterias.getJSONObject(i);
@@ -380,7 +404,7 @@ public class MapFragmentActivity extends AppCompatActivity
                         marker.setHeight(120);
                         marker.setIcon(OverlayImage.fromResource(R.drawable.washer2));
 
-                        Log.d("asdf", marker.getTag() + " : " + marker.getPosition().toString());
+                       // Log.d("asdf", marker.getTag() + " : " + marker.getPosition().toString());
                         marker.setMap(naverMap);
 
                         marker.setOnClickListener(new Overlay.OnClickListener() {
@@ -389,18 +413,6 @@ public class MapFragmentActivity extends AppCompatActivity
                                 Dialog mDialog = new Dialog(MapFragmentActivity.this);
                                 mDialog.setContentView(R.layout.map_popup_dialog);
                                 mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                                String Tel = null;
-                                try {
-                                    Tel = washteria.getString("TEL");
-                                    String washteriaImageurl = washteria.getString("thumUrl");
-                                    ImageView Dialogimage = mDialog.findViewById(R.id.image);
-                                    Glide.with(MapFragmentActivity.this).load(washteriaImageurl).into(Dialogimage);
-                                    TextView TEL = mDialog.findViewById(R.id.TEL);
-                                    TEL.setText(Tel);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
 
                                 String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
 
@@ -418,6 +430,11 @@ public class MapFragmentActivity extends AppCompatActivity
                                             int dryer_num = 0;
                                             int etc_num = 0;
 
+                                            //추가
+                                            String Tel = washteria.getString("TEL") ;
+                                            String washteriaImageurl = washteria.getString("thumUrl");
+                                            Log.d("Tel", Tel);
+                                            Log.d("Url",washteriaImageurl);
                                             for(int i=0; i<machines.length(); i++){
                                                 JSONObject machine = machines.getJSONObject(i);
                                                 int status = machine.getInt("status");
@@ -432,7 +449,11 @@ public class MapFragmentActivity extends AppCompatActivity
                                                         default : etc_num += 1; break;
                                                     }
                                                 }
-
+                                                //추가
+                                                TextView TEL = mDialog.findViewById(R.id.TEL);
+                                                TEL.setText(Tel);
+                                                ImageView Dialogimage = mDialog.findViewById(R.id.image);
+                                                Glide.with(MapFragmentActivity.this).load(washteriaImageurl).into(Dialogimage);
 
                                                 TextView washer_num_tv = mDialog.findViewById(R.id.washer_num);
                                                 washer_num_tv.setText("세탁기 : " + washer_num + "대");
@@ -500,7 +521,6 @@ public class MapFragmentActivity extends AppCompatActivity
                 Log.d("asdf", "에러: " + error.toString());
             }
         });
-
         requestQueue.add(stringRequest);
     }
 

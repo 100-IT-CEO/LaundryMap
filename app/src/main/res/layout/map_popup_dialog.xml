@@ -34,7 +34,7 @@
         android:background="#010101"
         />
     <LinearLayout
-        android:layout_marginVertical="10dp"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="30dp">
         <TextView
@@ -52,7 +52,9 @@
     <LinearLayout
         android:paddingHorizontal="10dp"
         android:layout_width="match_parent"
-        android:layout_height="130dp">
+        android:layout_height="130dp"
+        android:clipChildren="false">
+
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_marginLeft="0dp"

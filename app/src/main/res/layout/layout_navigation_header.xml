@@ -13,7 +13,9 @@
         android:layout_height="100dp"
         android:layout_marginTop="50dp"
         android:layout_marginLeft="20dp"
-        app:srcCompat="@drawable/bongocat2" />
+        android:background="@drawable/round"
+        android:clipToOutline="true"
+        android:src="@drawable/dryer" />
 
 
     <LinearLayout
@@ -295,6 +297,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1:1 문의"
+
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="30dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그아웃"
 
             />
 

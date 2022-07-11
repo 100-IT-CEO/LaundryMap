@@ -2,6 +2,7 @@ package com.kakaologin_sample;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,7 +36,7 @@ import java.net.URL;
 
 public class ReserveActivity extends AppCompatActivity{
 
-    private static final String HOST = "143.248.199.17";
+    private static final String HOST = "143.248.199.127";
     private static final String PORT = "80";
 
     private int washteria_id;
@@ -117,6 +119,12 @@ public class ReserveActivity extends AppCompatActivity{
                     dryer_num.setText(String.valueOf(count[3]));
                     etc_num.setText(String.valueOf(count[4]));
 
+
+                    if(count[0] == 0) button1.setCardBackgroundColor(ContextCompat.getColor(ReserveActivity.this, R.color.gray));
+                    if(count[1] == 0) button2.setCardBackgroundColor(ContextCompat.getColor(ReserveActivity.this, R.color.gray));
+                    if(count[2] == 0) button3.setCardBackgroundColor(ContextCompat.getColor(ReserveActivity.this, R.color.gray));
+                    if(count[3] == 0) button4.setCardBackgroundColor(ContextCompat.getColor(ReserveActivity.this, R.color.gray));
+                    if(count[4] == 0) button5.setCardBackgroundColor(ContextCompat.getColor(ReserveActivity.this, R.color.gray));
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -139,10 +147,10 @@ public class ReserveActivity extends AppCompatActivity{
                 LinearLayout layout_expand = findViewById(R.id.layout_expand_1);
 
                 if(layout_expand.getVisibility() == View.VISIBLE){
-                    hideView(layout_expand);
+                    layout_expand.setVisibility(View.GONE);
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
-                    showView(layout_expand);
+                    layout_expand.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -154,10 +162,10 @@ public class ReserveActivity extends AppCompatActivity{
                 LinearLayout layout_expand = findViewById(R.id.layout_expand_2);
 
                 if(layout_expand.getVisibility() == View.VISIBLE){
-                    hideView(layout_expand);
+                    layout_expand.setVisibility(View.GONE);
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
-                    showView(layout_expand);
+                    layout_expand.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -168,10 +176,10 @@ public class ReserveActivity extends AppCompatActivity{
                 LinearLayout layout_expand = findViewById(R.id.layout_expand_3);
 
                 if(layout_expand.getVisibility() == View.VISIBLE){
-                    hideView(layout_expand);
+                    layout_expand.setVisibility(View.GONE);
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
-                    showView(layout_expand);
+                    layout_expand.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -182,10 +190,10 @@ public class ReserveActivity extends AppCompatActivity{
                 LinearLayout layout_expand = findViewById(R.id.layout_expand_4);
 
                 if(layout_expand.getVisibility() == View.VISIBLE){
-                    hideView(layout_expand);
+                    layout_expand.setVisibility(View.GONE);
                 }
                 else if(layout_expand.getVisibility() == View.GONE){
-                    showView(layout_expand);
+                    layout_expand.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -234,6 +242,8 @@ public class ReserveActivity extends AppCompatActivity{
     public void create(LinearLayout linearLayout, JSONObject machine, int status){
         Button button = new Button(ReserveActivity.this);
         try{
+            button.setBackground(getDrawable(R.drawable.white_btn));
+
             switch(machine.getString("machine_type")){
 
                 case "big_washer" : button.setText("대형 세탁기 #" + String.valueOf(machine.getInt("machine_id"))); break;
@@ -245,7 +255,6 @@ public class ReserveActivity extends AppCompatActivity{
             button.setTag(machine.getInt("machine_id"));
 
             if(status!=0){
-                button.setBackgroundColor(Color.RED);
             }else{
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -258,8 +267,6 @@ public class ReserveActivity extends AppCompatActivity{
                                 try {
                                     JSONObject jsonObject = new JSONObject(response.toString());
                                     JSONArray machines = jsonObject.getJSONArray("result");
-
-
                                 }
                                 catch (JSONException e) {
                                     e.printStackTrace();
@@ -283,7 +290,22 @@ public class ReserveActivity extends AppCompatActivity{
         }
 
         button.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
-        linearLayout.addView(button);
+
+        LinearLayout linearlayout = new LinearLayout(ReserveActivity.this);
+
+        linearlayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.FILL_PARENT,
+            LinearLayout.LayoutParams.FILL_PARENT
+        );
+
+        layoutParams.setMargins(0, 0, 0, 30);
+
+        linearLayout.setBackgroundColor(Color.parseColor("#00000000"));
+
+        linearlayout.addView(button);
+        linearLayout.addView(linearlayout, layoutParams);
     }
 
 }
