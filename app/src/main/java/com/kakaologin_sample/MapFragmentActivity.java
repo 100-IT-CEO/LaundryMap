@@ -340,15 +340,13 @@ public class MapFragmentActivity extends AppCompatActivity
                         int dryer_medium_num  = washteria.getInt("dryer_medium_num");
 
                         Marker marker = new Marker();
-                        marker.setPosition(new LatLng(washteria.getDouble("locationX"), washteria.getDouble("locationY")));
+                        marker.setPosition(new LatLng(washteria.getDouble("locationY"), washteria.getDouble("locationX")));
                         marker.setCaptionText(washteria_name);
                         marker.setCaptionRequestedWidth(200);
                         marker.setTag(washteria_id);
                         marker.setWidth(120);
                         marker.setHeight(120);
                         marker.setIcon(OverlayImage.fromResource(R.drawable.washer2));
-
-                        Log.d("asdf", marker.getTag() + " : " + marker.getPosition().toString());
                         marker.setMap(naverMap);
 
                         marker.setOnClickListener(new Overlay.OnClickListener() {
@@ -357,7 +355,6 @@ public class MapFragmentActivity extends AppCompatActivity
                                 Dialog mDialog = new Dialog(MapFragmentActivity.this);
                                 mDialog.setContentView(R.layout.map_popup_dialog);
                                 mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
 
                                 String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
 

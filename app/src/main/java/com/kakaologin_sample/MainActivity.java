@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.e("asdf", "사용자 정보 요청 실패", meError);
                         } else {
                             account = user.getKakaoAccount();
-                            Log.d("asdf", account.toString());
+                            Log.d("asdf", String.valueOf(user.getId()));
                             Intent intent = new Intent(MainActivity.this, MapFragmentActivity.class);
 
                             intent.putExtra("profile_image", account.getProfile().getProfileImageUrl());
