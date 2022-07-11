@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
@@ -47,6 +48,8 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakaologin_sample.R;
 import com.naver.maps.geometry.LatLng;
@@ -82,6 +85,7 @@ public class MapFragmentActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
+    private IntentIntegrator qrScan;
 
     private ArrayList<Marker> markers;
     private static final String HOST = "143.248.199.127";
@@ -107,10 +111,19 @@ public class MapFragmentActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         profile_image_url = intent.getStringExtra("profile_image");
-
-        //추가
         nickname=intent.getStringExtra("nickname");
         kakao_id= String.valueOf(intent.getLongExtra("kakao_id",0L));
+
+        Button use_button = findViewById(R.id.use_button);
+        use_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                qrScan = new IntentIntegrator(MapFragmentActivity.this);
+                qrScan.setOrientationLocked(false); // default가 세로모드인데 휴대폰 방향에 따라 가로, 세로로 자동 변경됩니다.
+                qrScan.setPrompt("Sample Text!");
+                qrScan.initiateScan();
+            }
+        });
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.naverMap);
@@ -125,7 +138,8 @@ public class MapFragmentActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
-       
+
+
 
 //header change
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -284,54 +298,6 @@ public class MapFragmentActivity extends AppCompatActivity
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.custom_tool_bar, menu);
         return true;
-    }
-
-
-    //추가
-    private String getTime() {
-        long mNow;
-        Date mDate;
-        SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd");
-        mNow = System.currentTimeMillis();
-        mDate = new Date(mNow);
-        return mFormat.format(mDate);
-    }
-
-    private void showView(final View view){
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up);
-        //use this to make it longer:  animation.setDuration(1000);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.VISIBLE);
-            }
-        });
-
-        view.startAnimation(animation);
-    }
-
-    private void hideView(final View view){
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_down);
-        //use this to make it longer:  animation.setDuration(1000);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.GONE);
-            }
-        });
-        view.startAnimation(animation);
     }
 
     @Override
@@ -538,5 +504,100 @@ public class MapFragmentActivity extends AppCompatActivity
                 requestCode, permissions, grantResults);
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+
+                int machine_id = Integer.parseInt(result.getContents());
+
+                RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
+                String url = String.format("http://"+HOST+":"+PORT+"/machine_info?machine_id="+machine_id);
+
+                Log.d("asdf", url);
+
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener(){
+                    @Override
+                    public void onResponse(Object response) {
+                        try {
+                            JSONObject jsonObject = (new JSONObject(response.toString())).getJSONArray("result").getJSONObject(0);
+                            String machine_type = jsonObject.getString("machine_type") ;
+                            int operation_time;
+                            Dialog mDialog = new Dialog(MapFragmentActivity.this);
+                            mDialog.setContentView(R.layout.use_ask_dialog);
+                            mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
+                            TextView machine_type_tv = mDialog.findViewById(R.id.machine_type);
+
+                            switch(machine_type){
+                                case "big_washer" : machine_type_tv.setText("대형 세탁기 (45분)"); operation_time=45; break;
+                                case "washer" : machine_type_tv.setText("중형 세탁기 (30분)"); operation_time=30; break;
+                                case "big_dryer" : machine_type_tv.setText("대형 건조기 (45분)"); operation_time=45; break;
+                                case "dryer" : machine_type_tv.setText("중형 건조기 (45분)"); operation_time=30; break;
+                                default : machine_type_tv.setText("기타 기기 (15분)"); operation_time=15; break;
+                            }
+
+                            Button use_yes = mDialog.findViewById(R.id.use_yes);
+                            Button use_no = mDialog.findViewById(R.id.use_no);
+
+                            use_yes.setOnClickListener(v->{
+                                String uri = String.format("http://"+HOST+":"+PORT+"/using_machine?machine_id="+machine_id+"&kakao_id="+kakao_id+"&date="+getTime()+"&operation_time="+operation_time);
+                                    Log.d("asdf", uri);
+                                StringRequest stringRequest = new StringRequest(Request.Method.POST, uri, new Response.Listener() {
+                                    @Override
+                                    public void onResponse(Object response) {
+
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.d("asdf", "에러: " + error.toString());
+
+                                    }
+                                });
+                                requestQueue.add(stringRequest);
+                                mDialog.dismiss();
+                            });
+                            use_no.setOnClickListener(v->{
+                               mDialog.dismiss();
+                            });
+
+                            mDialog.getWindow().setDimAmount(0);
+                            mDialog.getWindow().setGravity(Gravity.BOTTOM);
+                            mDialog.show();
+
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("asdf","에러: " + error.toString());
+                    }
+                });
+                requestQueue.add(stringRequest);
+
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private String getTime() {
+        long mNow;
+        Date mDate;
+        SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        mNow = System.currentTimeMillis();
+        mDate = new Date(mNow);
+        return mFormat.format(mDate);
+    }
 
 }

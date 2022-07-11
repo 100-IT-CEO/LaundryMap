@@ -3,6 +3,9 @@
     <string name="kakao_app_key">823bfccbaed1b11ec9d2d72feb1edf5b</string>
     <string name="host">143.248.225.56</string>
     <string name="port">80</string>
+    <string name="title_activity_qrscan">QRScanActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
 

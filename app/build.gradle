@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.kakaologin_sample"
-        minSdk 21
+        minSdk 24
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -25,6 +25,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -35,6 +38,9 @@ dependencies {
 //Navigation Component
     implementation 'com.google.android.material:material:1.2.0-alpha02'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.0-rc03'
+
+    // QR 스캔
+    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
     // 네이버 SDK
     implementation 'com.naver.maps:map-sdk:3.15.0'

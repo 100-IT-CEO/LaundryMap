@@ -33,6 +33,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ReserveActivity extends AppCompatActivity{
 
@@ -41,10 +43,22 @@ public class ReserveActivity extends AppCompatActivity{
 
     private int washteria_id;
     private String washteria_name;
+    private int machine_id;
+    private String kakao_id;
+    private String reserve_start_time;
+
     private int washer_big_num;
     private int washer_num;
     private int dryer_big_num;
     private int dryer_num;
+
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(ReserveActivity.this, MapFragmentActivity.class);
+        intent.putExtra("kakao_id", (getIntent().getLongExtra("kakao_id", 0L)));
+        startActivity(intent);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,8 +68,10 @@ public class ReserveActivity extends AppCompatActivity{
 
         washteria_id = intent.getIntExtra("washteria_id", 0);
         washteria_name = intent.getStringExtra("washteria_name");
+        kakao_id = String.valueOf(intent.getLongExtra("kakao_id",0L));
 
         setContentView(R.layout.reserve_activity);
+
 
         CardView button1 = findViewById(R.id.reserve_button_1);
         CardView button2 = findViewById(R.id.reserve_button_2);
@@ -86,6 +102,9 @@ public class ReserveActivity extends AppCompatActivity{
                     TextView big_dryer_num = findViewById(R.id.big_dryer_num);
                     TextView dryer_num = findViewById(R.id.dryer_num);
                     TextView etc_num = findViewById(R.id.etc_num);
+
+                    TextView reserve_text_where = findViewById(R.id.reserve_text_where);
+                    reserve_text_where.setText(washteria_name);
 
                     int[] count= {0, 0, 0, 0, 0};
 
@@ -200,45 +219,6 @@ public class ReserveActivity extends AppCompatActivity{
     }
 
 
-
-    private void showView(final View view){
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up);
-        //use this to make it longer:  animation.setDuration(1000);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.VISIBLE);
-            }
-        });
-
-        view.startAnimation(animation);
-    }
-
-    private void hideView(final View view){
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_down);
-        //use this to make it longer:  animation.setDuration(1000);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.GONE);
-            }
-        });
-
-        view.startAnimation(animation);
-    }
-
     public void create(LinearLayout linearLayout, JSONObject machine, int status){
         Button button = new Button(ReserveActivity.this);
         try{
@@ -255,22 +235,31 @@ public class ReserveActivity extends AppCompatActivity{
             button.setTag(machine.getInt("machine_id"));
 
             if(status!=0){
+
             }else{
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String url = "http://"+HOST+":"+PORT+"/washteria_machines?id="+washteria_id;
+
+                        try {
+                            machine_id = machine.getInt("machine_id");
+                            reserve_start_time = getTime();
+//                            Log.d("Button,  machine id ", String.valueOf(machine.getInt("machine_id")));
+//                            Log.d("Button,kakao id ", String.valueOf(kakao_id));
+//                            Log.d("Button start ",getTime());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        //machine_id, kakao_id, reserve_start_time, reservaton_status =1 로 바꾸기  //에러처리 하면 좋음
+                        String url = "http://"+HOST+":"+PORT+"/create_reservation?machine_id="+machine_id+"&kakao_id="+kakao_id+"&reserve_start_time="+reserve_start_time+"&reservation_status="+1;
                         RequestQueue requestQueue = Volley.newRequestQueue(ReserveActivity.this);
-                        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener(){
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener(){
                             @Override
                             public void onResponse(Object response) {
-                                try {
-                                    JSONObject jsonObject = new JSONObject(response.toString());
-                                    JSONArray machines = jsonObject.getJSONArray("result");
-                                }
-                                catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                Toast.makeText(ReserveActivity.this, "예약이 완료됐습니다. ",Toast.LENGTH_SHORT).show();
+                                Log.d("새로고침 안됨 ", "여기");
+                                finish();
+                                startActivity(getIntent());
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -278,7 +267,6 @@ public class ReserveActivity extends AppCompatActivity{
                                 Log.d("asdf","에러: " + error.toString());
                             }
                         });
-
                         requestQueue.add(stringRequest);
                     }
                 });
@@ -308,4 +296,12 @@ public class ReserveActivity extends AppCompatActivity{
         linearLayout.addView(linearlayout, layoutParams);
     }
 
+    private String getTime() {
+        long mNow;
+        Date mDate;
+        SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        mNow = System.currentTimeMillis();
+        mDate = new Date(mNow);
+        return mFormat.format(mDate);
+    }
 }
