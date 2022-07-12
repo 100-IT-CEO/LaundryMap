@@ -207,20 +207,143 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="20dp"
-        android:gravity="center_vertical">
 
+
+
+    <LinearLayout
+        android:layout_marginLeft="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp">
         <TextView
+            android:id="@+id/navigation_bar_open_useList"
             android:fontFamily="@font/nanumsquareroundlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="이용기록"
             android:textSize="20dp" />
+        <LinearLayout
+            android:id="@+id/layout_useList"
+            android:layout_marginTop="10dp"
+            android:padding="20dp"
+
+            android:layout_width="300dp"
+            android:layout_height="150dp"
+            android:background="#c0eeff"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/use_washteria_name"
+                    android:fontFamily="@font/nanumsquareroundeb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="크린토피아"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:fontFamily="@font/nanumsquareroundb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="이용중"
+                    android:textStyle="bold"
+                    android:textSize="13dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+
+                <TextView
+                    android:id="@+id/use_washer_type"
+                    android:fontFamily="@font/nanumsquareroundb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="중형세탁기" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/use_start_time"
+                    android:fontFamily="@font/nanumsquareroundeb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginRight="10dp"
+                    android:text="10:30" />
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/goto_use"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
+            android:background="#c0eeff"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/no_useage_date"
+                    android:fontFamily="@font/nanumsquareroundeb"
+                    android:layout_width="match_parent"
+                    android:textSize="15sp"
+                    android:layout_height="wrap_content"
+                    android:text="날짜" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:textSize="13sp"
+                android:layout_height="wrap_content"
+                android:text="이용중인 세탁기계가 없습니다!"/>
+
+            <Button
+                android:id="@+id/go_to_useListCreateion"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/dark_blue_btn"
+                android:fontFamily="@font/nanumsquareroundeb"
+                android:text="이용하기"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
     </LinearLayout>
+
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"

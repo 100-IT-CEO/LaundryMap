@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -47,6 +48,10 @@ public class UsageListActivity extends AppCompatActivity {
 
                     ArrayList<UseageRecord> list = new ArrayList<UseageRecord>();
 
+                    int washer_usage = 0;
+                    int dryer_usage = 0;
+                    int etc_usage = 0;
+
                     for(int i=0; i<result.length(); i++){
                         JSONObject usage = result.getJSONObject(i);
 
@@ -55,18 +60,43 @@ public class UsageListActivity extends AppCompatActivity {
                         String date = usage.getString("date");
                         int operation_time = usage.getInt("operation_time");
 
-                        UseageRecord useageRecode = new UseageRecord(
+                        Log.d("asdf", date);
+
+                        switch(machine_type){
+                            case "big_washer" :
+                            case "washer" :
+                                washer_usage += 1;
+                                break;
+                            case "big_dryer":
+                            case "dryer":
+                                dryer_usage += 1;
+                                break;
+                            default:
+                                etc_usage += 1;
+                                break;
+                        }
+
+                        UseageRecord useageRecord = new UseageRecord(
                                 date, washteria_name, machine_type, String.valueOf(operation_time)
                         );
 
-                        list.add(useageRecode);
-
+                        list.add(useageRecord);
                     }
+
+                    TextView total_usage_tv = findViewById(R.id.total_usage);
+                    TextView washer_usage_tv = findViewById(R.id.washer_usage);
+                    TextView dryer_usage_tv = findViewById(R.id.dryer_usage);
+                    TextView etc_usage_tv = findViewById(R.id.etc_usage);
+
+                    total_usage_tv.setText(String.valueOf(washer_usage + dryer_usage + etc_usage) + "회");
+                    washer_usage_tv.setText(String.valueOf(washer_usage) + "회");
+                    dryer_usage_tv.setText(String.valueOf(dryer_usage) + "회");
+                    etc_usage_tv.setText(String.valueOf(etc_usage) + "회");
 
                     RecyclerView recyclerView = findViewById(R.id.rv);
                     recyclerView.setLayoutManager(new LinearLayoutManager(UsageListActivity.this));
 
-                    UseagerecordAdapter adapter = new UseagerecordAdapter();
+                    UseagerecordAdapter adapter = new UseagerecordAdapter(list);
                     recyclerView.setAdapter(adapter);
                 }
                 catch (JSONException e) {

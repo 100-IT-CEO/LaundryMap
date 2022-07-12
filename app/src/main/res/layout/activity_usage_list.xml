@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/right_arrow"
+            android:src="@drawable/left_arrow"
             />
         <TextView
             android:layout_width="0dp"
@@ -64,11 +64,12 @@
                 android:textColor="#000000"
                 android:text="총 이용 횟수" />
             <Button
-        android:fontFamily="@font/nanumsquareroundb"
+                android:id="@+id/total_usage"
+                android:fontFamily="@font/nanumsquareroundb"
                 android:layout_marginTop="8dp"
                 android:layout_marginLeft="30dp"
                 android:layout_width="100dp"
-               android:text="10회"
+                android:text="10회"
                 android:textSize="18dp"
                 android:layout_height="40dp"
                 android:background="@drawable/white_btn"
@@ -94,6 +95,7 @@
                     android:textSize="15dp"
                     />
                 <Button
+                    android:id="@+id/washer_usage"
                     android:fontFamily="@font/nanumsquareroundb"
                     android:background="@drawable/white_btn"
                     android:layout_marginLeft="11dp"
@@ -124,6 +126,7 @@
                 android:textSize="15dp"
                 />
             <Button
+                android:id="@+id/dryer_usage"
                 android:fontFamily="@font/nanumsquareroundb"
                 android:layout_marginLeft="11dp"
                 android:layout_marginTop="8dp"
@@ -153,6 +156,7 @@
                 android:textSize="15dp"
                 />
             <Button
+                android:id="@+id/etc_usage"
                 android:fontFamily="@font/nanumsquareroundb"
                 android:layout_marginLeft="11dp"
                 android:layout_marginTop="8dp"

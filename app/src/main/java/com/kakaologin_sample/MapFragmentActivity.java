@@ -95,6 +95,7 @@ public class MapFragmentActivity extends AppCompatActivity
     private TextView TEL;
     private ImageView image;
     private Boolean flag=true;
+    private Boolean flag2=true;
     private TextView btn_logout;
     private TextView reserve_start_time;
 
@@ -140,19 +141,6 @@ public class MapFragmentActivity extends AppCompatActivity
                 qrScan.initiateScan();
             }
         });
-        //추가
-        new Thread(new Runnable(){
-            @Override
-            public void run(){
-                try {
-                    Thread.sleep(4000);
-                    sendNotification();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.naverMap);
@@ -167,8 +155,8 @@ public class MapFragmentActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
-
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 왼쪽 상단 버튼 만들기
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.app_logo); //왼쪽 상단 버튼 아이콘 지정
 
 //header change
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -197,22 +185,40 @@ public class MapFragmentActivity extends AppCompatActivity
             }
         });
 
+        //예약기록 header요소들 모음집
         Button reserve_cancel_btn = (Button)headerview.findViewById(R.id.reserve_cancel_btn);
         TextView reserve_washteria_name= (TextView)headerview.findViewById(R.id.reserve_washteria_name);
         TextView reserve_washer_type = (TextView)headerview.findViewById(R.id.reserve_washer_type);
         reserve_start_time = (TextView)headerview.findViewById(R.id.reserve_start_time);
         TextView reserve_open_reservation = (TextView)headerview.findViewById(R.id.navigation_bar_open_reservation);
-
         LinearLayout layout_reservation = (LinearLayout)headerview.findViewById(R.id.layout_reservation);
         LinearLayout layout_goto_reservation = (LinearLayout)headerview.findViewById(R.id.layout_goto_reservation);
         layout_goto_reservation.setVisibility(View.GONE);
         layout_reservation.setVisibility(View.GONE);
 
-
         TextView no_reservation_date = (TextView)headerview.findViewById(R.id.no_reservation_date);
         Button go_to_reserveCreateion = (Button)headerview.findViewById(R.id.go_to_reserveCreateion);
 
 
+        //이용중 headeer요소들 모음집
+        TextView navigation_bar_open_useList = (TextView)headerview.findViewById(R.id.navigation_bar_open_useList);
+        TextView use_washteria_name = (TextView)headerview.findViewById(R.id.use_washteria_name);
+        TextView use_washer_type = (TextView)headerview.findViewById(R.id.use_washer_type);
+        TextView use_start_time = (TextView)headerview.findViewById(R.id.use_start_time);
+        LinearLayout layout_useList = (LinearLayout)headerview.findViewById(R.id.layout_useList);
+        LinearLayout goto_use = (LinearLayout)headerview.findViewById(R.id.goto_use);
+        Button go_to_useListCreateion = (Button)headerview.findViewById(R.id.go_to_useListCreateion);
+        //처음 시작은 안보이게
+        layout_useList.setVisibility(View.GONE);
+        goto_use.setVisibility(View.GONE);
+        go_to_useListCreateion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.closeDrawer(GravityCompat.END);
+            }
+        });
+
+        //마이페이지 버튼
         ImageView gotoMypage_btn = (ImageView)headerview.findViewById(R.id.gotoMypage_btn);
         gotoMypage_btn.setOnClickListener(v-> {
             Intent intent_mypage = new Intent(MapFragmentActivity.this, MyPageActivity.class);
@@ -225,7 +231,7 @@ public class MapFragmentActivity extends AppCompatActivity
 
         RequestQueue requestQueue = Volley.newRequestQueue(MapFragmentActivity.this);
         String uri2 = String.format("http://"+HOST+":"+PORT+"/reservation/recent?kakao_id="+kakao_id);
-        Log.d("response", uri2);
+        String url = String.format("http://"+HOST+":"+PORT+"/load_useageList/recent?kakao_id="+kakao_id);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, uri2, new Response.Listener() {
             @Override
             public void onResponse(Object response) {
@@ -262,7 +268,7 @@ public class MapFragmentActivity extends AppCompatActivity
                             c.add(Calendar.MONTH, -current_date.getMonth());
                             c.add(Calendar.DATE, -current_date.getDate());
                             c.add(Calendar.HOUR, -current_date.getHours());
-                            c.add(Calendar.MINUTE, 10-current_date.getMinutes());
+                            c.add(Calendar.MINUTE, 1-current_date.getMinutes());
                             c.add(Calendar.SECOND, -current_date.getSeconds());
 
                             Date due = c.getTime();
@@ -271,8 +277,8 @@ public class MapFragmentActivity extends AppCompatActivity
 
                             if(due.getMinutes() == 0 && due.getSeconds() == 0){
                                 timer.cancel();
+                                sendNotification();
                             }
-
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -316,7 +322,51 @@ public class MapFragmentActivity extends AppCompatActivity
                 Log.d("asdf", "에러: " + error.toString());
             }
         });
+        StringRequest stringRequest2 = new StringRequest(Request.Method.GET, url, new Response.Listener(){
+            @Override
+            public void onResponse(Object response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    JSONObject usage = jsonObject.getJSONArray("result").getJSONObject(0);
+                    String washteria_name = usage.getString("name");
+                    String machine_type = usage.getString("machine_type");
+                    int useage_status = usage.getInt("useage_status");
+                    if(useage_status != 1){
+                        throw(new NullPointerException());
+                    }
+                    String date = usage.getString("date");
+
+                    use_washteria_name.setText(washteria_name);
+
+                    switch (machine_type){
+                        case "big_washer": use_washer_type.setText("대형 세탁기"); break;
+                        case "washer": use_washer_type.setText("중형 세탁기"); break;
+                        case "big_dryer": use_washer_type.setText("대형 건조기"); break;
+                        case "dryer": use_washer_type.setText("중형 건조기"); break;
+                        default : use_washer_type.setText("기타 기기"); break;
+                    }
+
+                    use_start_time.setText(date.substring(11, 16).replace('-',':'));
+
+                    flag2=true;
+
+                }
+                catch (JSONException | NullPointerException e) {
+                    e.printStackTrace();
+                    flag2=false;
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("asdf","에러: " + error.toString());
+            }
+        });
         requestQueue.add(stringRequest);
+        requestQueue.add(stringRequest2);
+
+
+
 
         reserve_open_reservation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -343,7 +393,30 @@ public class MapFragmentActivity extends AppCompatActivity
             }
         });
 
+        navigation_bar_open_useList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout layout_useList = (LinearLayout)headerview.findViewById(R.id.layout_useList);
+                LinearLayout goto_use = (LinearLayout)headerview.findViewById(R.id.goto_use);
+                if (flag2) {
+                    if (layout_useList.getVisibility()==View.VISIBLE){
+                        layout_useList.setVisibility(View.GONE);
+                    }else{
+                        layout_useList.setVisibility(View.VISIBLE);
+                    }
+                    goto_use.setVisibility(View.GONE);
+                }
+                else{
+                    if (goto_use.getVisibility()==View.VISIBLE){
+                        goto_use.setVisibility(View.GONE);
+                    }else{
+                        goto_use.setVisibility(View.VISIBLE);
+                    }
+                    layout_useList.setVisibility(View.GONE);
+                }
 
+            }
+        });
 
         reserve_cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -654,6 +727,14 @@ public class MapFragmentActivity extends AppCompatActivity
                     public void onResponse(Object response) {
                         try {
                             JSONObject jsonObject = (new JSONObject(response.toString())).getJSONArray("result").getJSONObject(0);
+
+                            int status = jsonObject.getInt("status");
+
+                            if(status != 0){
+                                Toast.makeText(MapFragmentActivity.this, "현재 이용이 불가능한 기기입니다.", Toast.LENGTH_SHORT).show();
+                                throw(new NullPointerException());
+                            }
+
                             String machine_type = jsonObject.getString("machine_type") ;
                             int operation_time;
                             Dialog mDialog = new Dialog(MapFragmentActivity.this);
@@ -670,6 +751,7 @@ public class MapFragmentActivity extends AppCompatActivity
                                 case "dryer" : machine_type_tv.setText("중형 건조기 (45분)"); operation_time=30; break;
                                 default : machine_type_tv.setText("기타 기기 (15분)"); operation_time=15; break;
                             }
+
 
                             Button use_yes = mDialog.findViewById(R.id.use_yes);
                             Button use_no = mDialog.findViewById(R.id.use_no);
@@ -701,7 +783,7 @@ public class MapFragmentActivity extends AppCompatActivity
                             mDialog.show();
 
                         }
-                        catch (JSONException e) {
+                        catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }
                     }

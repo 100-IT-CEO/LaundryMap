@@ -29,7 +29,6 @@ public class UseageRecordActivity extends AppCompatActivity {
         useagerecordAdapter = new UseagerecordAdapter(arrayList);
         recyclerView.setAdapter(useagerecordAdapter);
 
-
     }
 }
 
