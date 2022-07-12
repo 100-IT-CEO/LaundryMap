@@ -189,9 +189,10 @@ public class MapFragmentActivity extends AppCompatActivity
         ImageView gotoMypage_btn = (ImageView)headerview.findViewById(R.id.gotoMypage_btn);
         gotoMypage_btn.setOnClickListener(v-> {
             Intent intent_mypage = new Intent(MapFragmentActivity.this, MyPageActivity.class);
-            intent.putExtra("kakao_id", kakao_id);
-            intent.putExtra("nickname", nickname);
-            intent.putExtra("profile_image_url", profile_image_url);
+            intent_mypage.putExtra("kakao_id", kakao_id);
+            intent_mypage.putExtra("nickname", nickname);
+            intent_mypage.putExtra("profile_image_url", profile_image_url);
+            Log.d("intent", kakao_id);
             startActivity(intent_mypage);
         });
 

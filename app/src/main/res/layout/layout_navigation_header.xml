@@ -70,7 +70,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="30dp">
 
         <TextView
             android:id="@+id/navigation_bar_open_reservation"

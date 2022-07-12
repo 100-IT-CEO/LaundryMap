@@ -40,6 +40,8 @@ public class MyPageActivity extends AppCompatActivity {
         nickname = intent.getStringExtra("nickname");
         profile_image_url = intent.getStringExtra("profile_image_url");
 
+        Log.d("intent_get", kakao_id);
+
         TextView name = findViewById(R.id.mypage_name);
         name.setText(nickname);
 
@@ -47,7 +49,7 @@ public class MyPageActivity extends AppCompatActivity {
         Glide.with(MyPageActivity.this).load(profile_image_url).into(imageView);
 
         int initial_imageView_height = imageView.getLayoutParams().height;
-
+        int initial_textView_height = name.getLayoutParams().height;
         ScrollView scrollView = findViewById(R.id.mypage_scrollview);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -56,8 +58,12 @@ public class MyPageActivity extends AppCompatActivity {
 
                 Log.d("scroll", String.valueOf(scrollY));
 
-                imageView.getLayoutParams().height = initial_imageView_height - scrollY;
-                imageView.requestLayout();
+                if(imageView.getLayoutParams().height > initial_imageView_height*0.75 || initial_imageView_height - scrollY > imageView.getLayoutParams().height){
+                    imageView.getLayoutParams().height = initial_imageView_height - scrollY;
+                    imageView.requestLayout();
+                    name.getLayoutParams().height = initial_textView_height - scrollY;
+                    name.requestLayout();
+                }
             }
         });
 
@@ -70,12 +76,11 @@ public class MyPageActivity extends AppCompatActivity {
             public void onResponse(Object response) {
                 try {
                     JSONObject jsonObject = new JSONObject(response.toString());
+                    JSONObject result = jsonObject.getJSONArray("result").getJSONObject(0);
 
-                    JSONArray infos = jsonObject.getJSONArray("result");
+                    String reg_dates = result.getString("regdate");
 
-                    //추가
-
-
+                    reg_date.setText("가입일 : " + reg_dates.substring(0, 19).replace('T',' '));
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -89,7 +94,5 @@ public class MyPageActivity extends AppCompatActivity {
         });
 
         requestQueue.add(stringRequest);
-        reg_date.setText("");
-
     }
 }
