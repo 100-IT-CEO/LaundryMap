@@ -2,6 +2,8 @@ package com.kakaologin_sample;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -55,8 +58,7 @@ public class ReserveActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(ReserveActivity.this, MapFragmentActivity.class);
-        intent.putExtra("kakao_id", (getIntent().getLongExtra("kakao_id", 0L)));
+        Intent intent = new Intent(ReserveActivity.this, MainActivity.class);
         startActivity(intent);
     }
 
@@ -68,7 +70,7 @@ public class ReserveActivity extends AppCompatActivity{
 
         washteria_id = intent.getIntExtra("washteria_id", 0);
         washteria_name = intent.getStringExtra("washteria_name");
-        kakao_id = String.valueOf(intent.getLongExtra("kakao_id",0L));
+        kakao_id = intent.getStringExtra("kakao_id");
 
         setContentView(R.layout.reserve_activity);
 
@@ -128,7 +130,7 @@ public class ReserveActivity extends AppCompatActivity{
                             case "washer" : create(layout_expand2, machine, status); break;
                             case "big_dryer" : create(layout_expand3, machine, status); break;
                             case "dryer" : create(layout_expand4, machine, status); break;
-                            default : create(layout_expand5, machine, status);
+                            default : create(layout_expand5, machine, status); break;
                         }
                     }
 
@@ -216,6 +218,20 @@ public class ReserveActivity extends AppCompatActivity{
                 }
             }
         });
+
+        button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout layout_expand = findViewById(R.id.layout_expand_5);
+
+                if(layout_expand.getVisibility() == View.VISIBLE){
+                    layout_expand.setVisibility(View.GONE);
+                }
+                else if(layout_expand.getVisibility() == View.GONE){
+                    layout_expand.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
@@ -230,12 +246,19 @@ public class ReserveActivity extends AppCompatActivity{
                 case "washer" : button.setText("중형 세탁기 #" + String.valueOf(machine.getInt("machine_id"))); break;
                 case "big_dryer" : button.setText("대형 건조기 #" + String.valueOf(machine.getInt("machine_id"))); break;
                 case "dryer" : button.setText("중형 건조기 #" + String.valueOf(machine.getInt("machine_id"))); break;
-                default : button.setText(machine.getString("machine_type")+ " #" + String.valueOf(machine.getInt("machine_id"))); break;
+                default : button.setText("기타 기기 #" + String.valueOf(machine.getInt("machine_id"))); break;
             }
             button.setTag(machine.getInt("machine_id"));
 
             if(status!=0){
-
+                Typeface typeface = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+                    typeface = getResources().getFont(R.font.nanumsquareroundlight);
+                else
+                    typeface = ResourcesCompat.getFont(ReserveActivity.this,R.font.nanumsquareroundlight);
+                button.setTypeface(typeface);
+                button.setTextColor(ContextCompat.getColor(ReserveActivity.this, R.color.gray));
+                button.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             }else{
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -245,13 +268,14 @@ public class ReserveActivity extends AppCompatActivity{
                             machine_id = machine.getInt("machine_id");
                             reserve_start_time = getTime();
 //                            Log.d("Button,  machine id ", String.valueOf(machine.getInt("machine_id")));
-//                            Log.d("Button,kakao id ", String.valueOf(kakao_id));
+//                            Log.d("Button, kakao id ", String.valueOf(kakao_id));
 //                            Log.d("Button start ",getTime());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         //machine_id, kakao_id, reserve_start_time, reservaton_status =1 로 바꾸기  //에러처리 하면 좋음
                         String url = "http://"+HOST+":"+PORT+"/create_reservation?machine_id="+machine_id+"&kakao_id="+kakao_id+"&reserve_start_time="+reserve_start_time+"&reservation_status="+1;
+                        Log.d("asdf", url);
                         RequestQueue requestQueue = Volley.newRequestQueue(ReserveActivity.this);
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener(){
                             @Override
@@ -265,6 +289,8 @@ public class ReserveActivity extends AppCompatActivity{
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 Log.d("asdf","에러: " + error.toString());
+                                finish();
+                                startActivity(getIntent());
                             }
                         });
                         requestQueue.add(stringRequest);
