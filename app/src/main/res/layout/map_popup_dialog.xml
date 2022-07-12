@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:background="@drawable/light_gray_button">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,10 +43,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            android:text="042)350-5050"
-            android:gravity="end"
-            android:textColor="#5B5454"
-            android:textSize="8pt" />
+        android:text="042)350-5050"
+        android:gravity="end"
+        android:textColor="#5B5454"
+        android:textSize="8pt" />
     </LinearLayout>
 
 

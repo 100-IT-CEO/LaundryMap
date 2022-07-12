@@ -41,7 +41,7 @@ import java.util.Date;
 
 public class ReserveActivity extends AppCompatActivity{
 
-    private static final String HOST = "143.248.199.127";
+    private static final String HOST = "143.248.199.169";
     private static final String PORT = "80";
 
     private int washteria_id;

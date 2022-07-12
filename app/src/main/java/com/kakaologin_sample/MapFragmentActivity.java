@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -79,7 +80,7 @@ public class MapFragmentActivity extends AppCompatActivity
     private TimerTask timerTask;
     private Date due;
     private ArrayList<Marker> markers;
-    private static final String HOST = "143.248.199.127";
+    private static final String HOST = "143.248.199.169";
     private static final String PORT = "80";
     private static String profile_image_url;
 
@@ -93,6 +94,8 @@ public class MapFragmentActivity extends AppCompatActivity
     private Boolean flag=true;
     private TextView btn_logout;
     private TextView reserve_start_time;
+
+
 
     final Handler handler = new Handler(){
         public void handleMessage(Message msg){
@@ -182,9 +185,13 @@ public class MapFragmentActivity extends AppCompatActivity
         TextView no_reservation_date = (TextView)headerview.findViewById(R.id.no_reservation_date);
         Button go_to_reserveCreateion = (Button)headerview.findViewById(R.id.go_to_reserveCreateion);
 
+
         ImageView gotoMypage_btn = (ImageView)headerview.findViewById(R.id.gotoMypage_btn);
         gotoMypage_btn.setOnClickListener(v-> {
             Intent intent_mypage = new Intent(MapFragmentActivity.this, MyPageActivity.class);
+            intent.putExtra("kakao_id", kakao_id);
+            intent.putExtra("nickname", nickname);
+            intent.putExtra("profile_image_url", profile_image_url);
             startActivity(intent_mypage);
         });
 
@@ -340,7 +347,7 @@ public class MapFragmentActivity extends AppCompatActivity
         go_to_reserveCreateion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 drawerLayout.closeDrawer(GravityCompat.END);
+                drawerLayout.closeDrawer(GravityCompat.END);
 //                onBackPressed();
             }
         });
@@ -396,7 +403,7 @@ public class MapFragmentActivity extends AppCompatActivity
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener() {
             @Override
             public void onResponse(Object response) {
-         //       Log.d("asdf", response.toString());
+                //       Log.d("asdf", response.toString());
 
                 try {
                     JSONObject jsonObject = new JSONObject(response.toString());
@@ -423,7 +430,7 @@ public class MapFragmentActivity extends AppCompatActivity
                         marker.setHeight(120);
                         marker.setIcon(OverlayImage.fromResource(R.drawable.washer2));
 
-                       // Log.d("asdf", marker.getTag() + " : " + marker.getPosition().toString());
+                        // Log.d("asdf", marker.getTag() + " : " + marker.getPosition().toString());
                         marker.setMap(naverMap);
 
                         marker.setOnClickListener(new Overlay.OnClickListener() {
@@ -494,6 +501,18 @@ public class MapFragmentActivity extends AppCompatActivity
                                                 //추가
                                                 TextView TEL = mDialog.findViewById(R.id.TEL);
                                                 TEL.setText(Tel);
+                                                Tel = Tel.replace("-", "");
+                                                String tel = "tel:" + Tel;
+
+
+                                                // startActivity(new Intent("android.intent.action.DIAL", Uri.parse(Tel)));
+                                                TEL.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        startActivity(new Intent("android.intent.action.DIAL", Uri.parse(tel)));
+                                                        Log.d("전화번호", tel);
+                                                    }
+                                                });
                                                 ImageView Dialogimage = mDialog.findViewById(R.id.image);
                                                 Glide.with(MapFragmentActivity.this).load(washteriaImageurl).into(Dialogimage);
 
@@ -506,7 +525,7 @@ public class MapFragmentActivity extends AppCompatActivity
                                             }
                                         }
                                         catch (JSONException e) {
-                                        e.printStackTrace();
+                                            e.printStackTrace();
                                         }
                                     }
                                 }, new Response.ErrorListener() {
@@ -627,7 +646,7 @@ public class MapFragmentActivity extends AppCompatActivity
 
                             use_yes.setOnClickListener(v->{
                                 String uri = String.format("http://"+HOST+":"+PORT+"/using_machine?machine_id="+machine_id+"&kakao_id="+kakao_id+"&date="+getTime()+"&operation_time="+operation_time);
-                                    Log.d("asdf", uri);
+                                Log.d("asdf", uri);
                                 StringRequest stringRequest = new StringRequest(Request.Method.POST, uri, new Response.Listener() {
                                     @Override
                                     public void onResponse(Object response) {
@@ -644,7 +663,7 @@ public class MapFragmentActivity extends AppCompatActivity
                                 mDialog.dismiss();
                             });
                             use_no.setOnClickListener(v->{
-                               mDialog.dismiss();
+                                mDialog.dismiss();
                             });
 
                             mDialog.getWindow().setDimAmount(0);

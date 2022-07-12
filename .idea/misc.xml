@@ -41,6 +41,7 @@
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/drawable/rounded_background.xml" value="0.196" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/drawable/use_ask_dialog.xml" value="0.195" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/drawable/white_btn.xml" value="0.196" />
+        <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/font/nanumbrush.xml" value="0.22291666666666668" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/activity_login.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/activity_main.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/activity_my_page.xml" value="0.2" />
@@ -49,7 +50,7 @@
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/layout_navigation_header.xml" value="0.22" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/map_fragment_activity.xml" value="0.22" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/map_popup_dialog.xml" value="0.22" />
-        <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/reserve_activity.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/reserve_activity.xml" value="0.2" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/use_ask_dialog.xml" value="0.1875" />
         <entry key="..\:/Users/User/Desktop/WashTeria/app/src/main/res/layout/useage_record.xml" value="0.36666666666666664" />
         <entry key="app/src/main/res/layout/layout_navigation_header.xml" value="0.25" />
