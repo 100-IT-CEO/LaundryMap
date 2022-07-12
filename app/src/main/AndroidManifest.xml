@@ -25,6 +25,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
+            android:name=".UsageListActivity"
+            android:exported="false" />
+        <activity
             android:name=".MyPageActivity"
             android:exported="true" />
         <activity

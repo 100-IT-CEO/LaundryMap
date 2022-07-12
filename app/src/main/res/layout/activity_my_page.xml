@@ -45,6 +45,7 @@
                 android:layout_marginVertical="20dp"/>
 
             <TextView
+                android:id="@+id/usage_list"
                 android:fontFamily="@font/nanumsquareroundlight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

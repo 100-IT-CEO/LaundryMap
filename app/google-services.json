@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "208826664045",
+    "project_id": "washteria-9df05",
+    "storage_bucket": "washteria-9df05.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208826664045:android:6546aa027b25ca2fc0eb64",
+        "android_client_info": {
+          "package_name": "com.kakaologin_sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208826664045-aomo6m3puf7n94atmiklvtr17d8bu3c1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTuXPqLAiY56M565QTlskgpx87UkO209A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208826664045-aomo6m3puf7n94atmiklvtr17d8bu3c1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

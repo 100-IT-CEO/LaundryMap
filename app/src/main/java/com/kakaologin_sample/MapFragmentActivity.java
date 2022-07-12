@@ -2,6 +2,8 @@ package com.kakaologin_sample;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -95,6 +98,14 @@ public class MapFragmentActivity extends AppCompatActivity
     private TextView btn_logout;
     private TextView reserve_start_time;
 
+    // Channel에 대한 id 생성
+    private static final String PRIMARY_CHANNEL_ID = "primary_notification_channel";
+    // Channel을 생성 및 전달해 줄 수 있는 Manager 생성
+    private NotificationManager mNotificationManager;
+
+    // Notification에 대한 ID 생성
+    private static final int NOTIFICATION_ID = 0;
+
 
 
     final Handler handler = new Handler(){
@@ -109,6 +120,9 @@ public class MapFragmentActivity extends AppCompatActivity
 
         setContentView(R.layout.map_fragment_activity);
 
+        //추가 채널 만들기
+        createNotificationChannel();
+
         Intent intent = getIntent();
 
         profile_image_url = intent.getStringExtra("profile_image");
@@ -119,12 +133,26 @@ public class MapFragmentActivity extends AppCompatActivity
         use_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 qrScan = new IntentIntegrator(MapFragmentActivity.this);
                 qrScan.setOrientationLocked(false); // default가 세로모드인데 휴대폰 방향에 따라 가로, 세로로 자동 변경됩니다.
                 qrScan.setPrompt("Sample Text!");
                 qrScan.initiateScan();
             }
         });
+        //추가
+        new Thread(new Runnable(){
+            @Override
+            public void run(){
+                try {
+                    Thread.sleep(4000);
+                    sendNotification();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
 
         FragmentManager fm = getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.naverMap);
@@ -162,7 +190,6 @@ public class MapFragmentActivity extends AppCompatActivity
                     } else {
                         Log.e("tag", "로그아웃 성공, SDK에서 토큰 삭제됨");
                         Intent goto_login_intent = new Intent(v.getContext(), LoginActivity.class);
-
                         startActivity(goto_login_intent);
                     }
                     return null;
@@ -317,9 +344,11 @@ public class MapFragmentActivity extends AppCompatActivity
         });
 
 
+
         reserve_cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String uri2 = String.format("http://"+HOST+"/reservation/cancel?id="+kakao_id);
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, uri2, new Response.Listener() {
                     @Override
@@ -328,8 +357,8 @@ public class MapFragmentActivity extends AppCompatActivity
                             JSONObject jsonObject = new JSONObject(response.toString());
                             layout_reservation.setVisibility(View.GONE);
                             layout_goto_reservation.setVisibility(View.VISIBLE);
-
                             no_reservation_date.setText(getTime().toString().substring(0, 10));
+                            //추가
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -688,6 +717,45 @@ public class MapFragmentActivity extends AppCompatActivity
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    public void createNotificationChannel()
+    {
+        //notification manager 생성
+        mNotificationManager = (NotificationManager)
+                getSystemService(NOTIFICATION_SERVICE);
+        // 기기(device)의 SDK 버전 확인 ( SDK 26 버전 이상인지 - VERSION_CODES.O = 26)
+        if(android.os.Build.VERSION.SDK_INT
+                >= android.os.Build.VERSION_CODES.O){
+            //Channel 정의 생성자( construct 이용 )
+            NotificationChannel notificationChannel = new NotificationChannel(PRIMARY_CHANNEL_ID
+                    ,"Test Notification",mNotificationManager.IMPORTANCE_HIGH);
+            //Channel에 대한 기본 설정
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setDescription("Notification from Mascot");
+            // Manager을 이용하여 Channel 생성
+            mNotificationManager.createNotificationChannel(notificationChannel);
+        }
+
+    }
+
+    // Notification Builder를 만드는 메소드
+    private NotificationCompat.Builder getNotificationBuilder() {
+        NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
+                .setContentTitle("예약이 시간 완료! ")
+                .setContentText("예약 시간이 완료 됐습니다!")
+                .setSmallIcon(R.drawable.washer2);
+        return notifyBuilder;
+    }
+
+    // Notification을 보내는 메소드
+    public void sendNotification(){
+        // Builder 생성
+        NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
+        // Manager를 통해 notification 디바이스로 전달
+        mNotificationManager.notify(NOTIFICATION_ID,notifyBuilder.build());
     }
 
     private String getTime() {

@@ -92,7 +92,13 @@ public class MyPageActivity extends AppCompatActivity {
                 Log.d("asdf","에러: " + error.toString());
             }
         });
-
         requestQueue.add(stringRequest);
+
+        TextView usage_list = findViewById(R.id.usage_list);
+        usage_list.setOnClickListener(v->{
+            Intent intent_usage = new Intent(MyPageActivity.this, UsageListActivity.class);
+            intent_usage.putExtra("kakao_id", kakao_id);
+            startActivity(intent_usage);
+        });
     }
 }

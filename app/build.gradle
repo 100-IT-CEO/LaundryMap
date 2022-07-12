@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -53,6 +54,11 @@ dependencies {
     implementation "com.kakao.sdk:v2-navi:2.4.2" // 카카오내비
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation files('libs/libDaumMapAndroid.jar')
+
+    //push
+    implementation 'com.google.android.gms:play-services-vision:20.0.0'
+    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+    implementation 'com.google.firebase:firebase-analytics'
 
     //http
     implementation 'com.android.volley:volley:1.2.1'
