@@ -9,8 +9,9 @@
 - 현실에서 적용 가능한, 기업에게 팔 수 있는 시스템을 만드는 것을 목표로 했습니다.
 
 # 어플리케이션 소개 
- 
-![git_home2](https://www.youtube.com/watch?v=z7II2r4DytY)
+- help ㅠ
+
+ ![Video Label](http://img.youtube.com/vi/z7II2r4DytY/0.jpg)
 
 ## Splash 화면
 - 간단한 애니메이션을 넣어 로딩 화면을 구현했습니다.
