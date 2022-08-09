@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -7,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.kakaologin_sample"
-        minSdk 21
+        minSdk 24
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -21,24 +22,32 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
-
-//Rounded Image View
+    //Rounded Image View
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
-//Navigation Component
+    //Navigation Component
     implementation 'com.google.android.material:material:1.2.0-alpha02'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.0-rc03'
+    
+    // QR 스캔
+    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
-        // 네이버 SDK
+    // 네이버 SDK
     implementation 'com.naver.maps:map-sdk:3.15.0'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
+    
     // 카카오 SDK 모듈 설치
     implementation "com.kakao.sdk:v2-user:2.4.2" // 카카오 로그인
     implementation "com.kakao.sdk:v2-talk:2.4.2" // 친구, 메시지(카카오톡)
@@ -47,6 +56,19 @@ dependencies {
     implementation "com.kakao.sdk:v2-navi:2.4.2" // 카카오내비
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation files('libs/libDaumMapAndroid.jar')
+
+    //push
+    implementation 'com.google.android.gms:play-services-vision:20.0.0'
+    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+    implementation 'com.google.firebase:firebase-analytics'
+
+    //http
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'com.google.code.gson:gson:2.3.1'
+
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'

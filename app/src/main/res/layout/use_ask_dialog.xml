@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="230dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/light_gray_button">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        >
+        <TextView
+            android:id="@+id/machine_type"
+            android:textAlignment="center"
+            android:fontFamily="@font/nanumsquareroundeb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="대형 세탁기"
+            android:textColor="#5B5454"
+            android:textStyle="bold"
+            android:textSize="10pt"
+            android:paddingBottom="10dp"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:textAlignment="center"
+        android:fontFamily="@font/nanumsquareroundeb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="사용을 시작하시겠습니까?"
+        android:textColor="#5B5454"
+        android:textStyle="bold"
+        android:textSize="10pt"
+        android:paddingBottom="10dp"
+        />
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/use_yes"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="네"
+            android:fontFamily="@font/nanumsquareroundeb"
+            android:textSize="8pt"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="@drawable/blue_btn" />
+
+        <View
+            android:layout_width="15dp"
+            android:layout_height="match_parent"/>
+        <Button
+            android:id="@+id/use_no"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="아니오"
+            android:fontFamily="@font/nanumsquareroundeb"
+            android:textSize="8pt"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="@drawable/dark_blue_btn" />
+
+    </LinearLayout>
+</LinearLayout>

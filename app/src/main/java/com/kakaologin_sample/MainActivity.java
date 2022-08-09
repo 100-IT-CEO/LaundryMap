@@ -20,11 +20,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
+import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.navigation.NavigationView;
+import com.kakao.sdk.auth.AuthApiClient;
+import com.kakao.sdk.common.model.KakaoSdkError;
+
 import com.kakao.sdk.user.UserApiClient;
+import com.kakao.sdk.user.model.AccessTokenInfo;
 import com.kakao.sdk.user.model.Account;
 import com.kakao.sdk.user.model.User;
 import com.naver.maps.geometry.LatLng;
@@ -37,95 +44,82 @@ import com.naver.maps.map.util.FusedLocationSource;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG="사용자";
+
     private ImageView btn_login, btn_login_out;
     private NaverMap naverMap;
     private FusedLocationSource locationSource;
+    private Account account;
+    
     Toolbar toolbar;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         Log.d("사용자", getKeyHash());
 
-
         NaverMapSdk.getInstance(this).setClient(new NaverMapSdk.NaverCloudPlatformClient("p0w8vochex"));
+        startMapFragmentActivity();
+        if(AuthApiClient.getInstance().hasToken()){
+            UserApiClient.getInstance().accessTokenInfo((accessTokenInfo, error) -> {
+                if(error != null){
+                    if(error instanceof KakaoSdkError && ((KakaoSdkError) error).isInvalidTokenError() == true){
+                        startLoginActivity();
+                        Log.d("asdf", "a");
+                    }
+                    else{
+                        Log.d("asdf", "b");
+                        startLoginActivity();
+                    }
+                }
+                else{
+                    UserApiClient.getInstance().me((user, meError) -> {
+                        if (meError != null) {
+                            Log.e("asdf", "사용자 정보 요청 실패", meError);
+                        } else {
+                            account = user.getKakaoAccount();
+                            Log.d("asdf", account.toString());
+                            Intent intent = new Intent(MainActivity.this, MapFragmentActivity.class);
+                            //추가
+                            intent.putExtra("profile_image", account.getProfile().getProfileImageUrl());
+                            intent.putExtra("nickname", account.getProfile().getNickname());
+                            intent.putExtra("kakao_id", user.getId());
+                            Log.d("asdf", String.valueOf(user.getId()));
+                            startActivity(intent);
 
-        btn_login = findViewById(R.id.btn_login);
-
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MapFragmentActivity.class);
-
-                startActivity(intent);
-            }
-        });
-
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-
-
-
-setSupportActionBar(toolbar);
-     getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 왼쪽 상단 버튼 만들기
-       getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher_foreground); //왼쪽 상단 버튼 아이콘 지정
-
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView)findViewById(R.id.navigation_view);
-
-
-//        btn_login.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this,(oAuthToken, error) -> {
-//                    if (error != null) {
-//                        Log.e(TAG, "로그인 실패", error);
-//                    } else if (oAuthToken != null) {
-//                        Log.i(TAG, "로그인 성공(토큰) : " + oAuthToken.getAccessToken());
-//
-//                        UserApiClient.getInstance().me((user, meError) -> {
-//                            if (meError != null) {
-//                                Log.e(TAG, "사용자 정보 요청 실패", meError);
-//                            } else {
-//                                System.out.println("로그인 완료");
-//                                Log.i(TAG, user.toString());
-//                                {
-//                                    Log.i(TAG, "사용자 정보 요청 성공" +
-//                                            "\n회원번호: "+user.getId() +
-//                                            "\n이메일: "+user.getKakaoAccount().getEmail());
-//                                }
-//                                Account user1 = user.getKakaoAccount();
-//                                System.out.println("사용자 계정" + user1);
-//                            }
-//                            return null;
-//                        });
-//                    }
-//                    return null;
-//                });
-//
-//            }
-//        });
-
-
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:{ // 왼쪽 상단 버튼 눌렀을 때
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-            }
+                        }
+                        return null;
+                    });
+                    Log.d("asdf", "c");
+                    startMapFragmentActivity();
+                }
+                return null;
+            });
+        }else{
+            Log.d("asdf", "d");
+            startLoginActivity();
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    public void startLoginActivity(){
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    public void startMapFragmentActivity(){
+        Intent intent = new Intent(MainActivity.this, MapFragmentActivity.class);
+        startActivity(intent);
     }
 
     @Override

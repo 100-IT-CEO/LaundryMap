@@ -24,42 +24,7 @@
             android:theme="@style/Theme.NavigationDrawer">
 
         </androidx.appcompat.widget.Toolbar>
-        <LinearLayout
-            android:layout_marginTop="400dp"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="kakao 로그인"
-            android:textStyle="bold"
-            />
-        <ImageView
-            android:id="@+id/btn_login"
-            android:layout_marginTop="30dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/kakao_login_medium_narrow"
-            />
-
-        </LinearLayout>
-
 
 </RelativeLayout>
-
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/layout_navigation_header"
-            app:menu="@menu/navigation_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

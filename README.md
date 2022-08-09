@@ -20,8 +20,7 @@
 - 세상에 없는 앱을 고민해보았습니다.
 - 현실에서 적용 가능한, 기업에게 팔 수 있는 시스템을 만드는 것을 목표로 했습니다.
 
-
- ![Video Label](http://img.youtube.com/vi/z7II2r4DytY/0.jpg)
+[![Video Label](http://img.youtube.com/vi/z7II2r4DytY/0.jpg)](https://youtu.be/z7II2r4DytY)
 
 ## Splash 화면
 - 간단한 애니메이션을 넣어 로딩 화면을 구현했습니다.
