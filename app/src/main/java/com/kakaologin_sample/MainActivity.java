@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
@@ -28,6 +29,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.kakao.sdk.auth.AuthApiClient;
 import com.kakao.sdk.common.model.KakaoSdkError;
+
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.AccessTokenInfo;
 import com.kakao.sdk.user.model.Account;
@@ -49,11 +51,12 @@ import kotlin.jvm.functions.Function2;
 
 
 public class MainActivity extends AppCompatActivity {
+
     private ImageView btn_login, btn_login_out;
     private NaverMap naverMap;
     private FusedLocationSource locationSource;
     private Account account;
-
+    
     Toolbar toolbar;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -119,6 +122,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() { //뒤로가기 했을 때
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
     // 키해시 얻기
     public String getKeyHash(){
         try{

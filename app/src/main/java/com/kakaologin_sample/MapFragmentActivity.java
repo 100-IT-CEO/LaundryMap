@@ -1,5 +1,4 @@
 package com.kakaologin_sample;
-
 import android.Manifest;
 import android.app.Dialog;
 import android.app.NotificationChannel;
@@ -42,6 +41,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.kakao.sdk.user.UserApiClient;
+
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
@@ -56,6 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,7 +65,6 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 public class MapFragmentActivity extends AppCompatActivity
         implements OnMapReadyCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
@@ -72,6 +72,7 @@ public class MapFragmentActivity extends AppCompatActivity
 
     private NaverMap naverMap;
     private FusedLocationSource locationSource;
+
     private JSONArray washterias;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -121,6 +122,7 @@ public class MapFragmentActivity extends AppCompatActivity
 
         setContentView(R.layout.map_fragment_activity);
 
+
         //추가 채널 만들기
         createNotificationChannel();
 
@@ -152,6 +154,7 @@ public class MapFragmentActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
 
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
@@ -693,6 +696,7 @@ public class MapFragmentActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
+
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (locationSource.onRequestPermissionsResult(
                 requestCode, permissions, grantResults)) {
@@ -848,5 +852,4 @@ public class MapFragmentActivity extends AppCompatActivity
         mDate = new Date(mNow);
         return mFormat.format(mDate);
     }
-
 }
